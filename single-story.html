@@ -21,6 +21,33 @@
     };
   </script>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .site-nav-glass {
+      background: rgba(255, 255, 255, 0.55);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-dropdown-panel {
+      display: none;
+    }
+    .nav-dropdown-panel.is-open {
+      display: block;
+    }
+
+    #hero-image {
+      display: none;
+    }
+    #hero-image.is-active {
+      display: block;
+    }
+    #hero-video.is-hidden {
+      display: none;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .js-hero-kicker,
       .js-hero-title,
@@ -83,9 +110,45 @@
   </style>
 </head>
 <body class="font-sans text-neutral-900 antialiased">
-  <!-- Fixed full-screen video -->
+  <!-- Global nav -->
+  <header class="site-nav-glass sticky top-0 z-[60] w-full border-b border-black/5">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <a href="home.html" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
+      <nav class="flex items-center gap-1 text-sm font-medium text-neutral-800 sm:gap-3" aria-label="Primary">
+        <a href="home.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
+        <a href="archive.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Archive</a>
+        <div class="relative" id="nav-categories-wrap">
+          <button
+            type="button"
+            id="nav-categories-btn"
+            class="flex items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white/60"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="nav-categories-panel"
+          >
+            Categories
+            <span class="text-xs text-neutral-500" aria-hidden="true">▾</span>
+          </button>
+          <div
+            id="nav-categories-panel"
+            class="nav-dropdown-panel absolute right-0 mt-2 min-w-[11rem] rounded-xl border border-black/5 bg-white/95 py-2 shadow-lg backdrop-blur-md"
+            style="-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);"
+            role="menu"
+            aria-hidden="true"
+          >
+            <a href="home.html#section-wellness" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Wellness</a>
+            <a href="home.html#section-street" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Street</a>
+            <a href="home.html#section-beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Fixed full-screen media -->
   <div class="fixed inset-0 z-0 h-[100dvh] w-full overflow-hidden bg-neutral-950" aria-hidden="true">
     <video
+      id="hero-video"
       class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
       style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
       autoplay
@@ -96,19 +159,29 @@
     >
       <source src="lace1.mp4" type="video/mp4" />
     </video>
+    <img
+      id="hero-image"
+      src="heidi-in-bg.png"
+      alt=""
+      class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
+      width="1920"
+      height="1080"
+    />
     <!-- 40% dark overlay -->
     <div class="absolute inset-0 bg-black/40"></div>
   </div>
 
   <!-- Scrolling content over video -->
   <div class="relative z-10 min-h-[100dvh]">
-    <header class="px-5 pb-8 pt-14 text-center sm:px-8 sm:pt-20 md:px-12">
+    <header class="px-5 pb-8 pt-12 text-center sm:px-8 sm:pt-16 md:px-12">
       <p
+        id="hero-kicker-text"
         class="js-hero-kicker text-xs font-medium uppercase tracking-[0.35em] text-white/90 transition-all duration-700 ease-out"
       >
         Aura St. Claire
       </p>
       <h1
+        id="hero-title-text"
         class="js-hero-title mt-4 font-serif text-4xl font-semibold leading-tight text-white drop-shadow-sm transition-all duration-700 ease-out sm:text-5xl md:text-6xl"
       >
         The Immersive Vibe
@@ -140,8 +213,9 @@
           The Collection
         </h2>
         <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:gap-8">
-          <article
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md sm:min-h-0"
+          <a
+            href="single-story.html?s=duck"
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98] sm:min-h-0"
             style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
           >
             <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
@@ -150,17 +224,17 @@
             <div class="flex flex-1 flex-col p-5 sm:p-6">
               <h3 class="font-serif text-xl font-semibold text-neutral-900">Noir Silk</h3>
               <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
-              <a
-                href="#"
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              <span
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
               >
                 Shop the Look
-              </a>
+              </span>
             </div>
-          </article>
+          </a>
 
-          <article
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+          <a
+            href="single-story.html?s=lace"
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
             style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
           >
             <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
@@ -169,17 +243,17 @@
             <div class="flex flex-1 flex-col p-5 sm:p-6">
               <h3 class="font-serif text-xl font-semibold text-neutral-900">Lace Column</h3>
               <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
-              <a
-                href="#"
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              <span
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
               >
                 Shop the Look
-              </a>
+              </span>
             </div>
-          </article>
+          </a>
 
-          <article
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+          <a
+            href="single-story.html?s=o"
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
             style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
           >
             <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
@@ -188,17 +262,17 @@
             <div class="flex flex-1 flex-col p-5 sm:p-6">
               <h3 class="font-serif text-xl font-semibold text-neutral-900">Ivory Tailoring</h3>
               <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
-              <a
-                href="#"
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              <span
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
               >
                 Shop the Look
-              </a>
+              </span>
             </div>
-          </article>
+          </a>
 
-          <article
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+          <a
+            href="single-story.html?s=lace-beauty"
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
             style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
           >
             <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
@@ -207,14 +281,13 @@
             <div class="flex flex-1 flex-col p-5 sm:p-6">
               <h3 class="font-serif text-xl font-semibold text-neutral-900">Midnight Cape</h3>
               <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
-              <a
-                href="#"
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              <span
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
               >
                 Shop the Look
-              </a>
+              </span>
             </div>
-          </article>
+          </a>
         </div>
       </section>
     </main>
@@ -226,6 +299,75 @@
 
   <script>
     (function () {
+      var STORIES = {
+        duck: { kicker: 'Wellness', title: 'Noir Silk', mode: 'image', image: '1st-duck.png' },
+        lace: { kicker: 'Wellness', title: 'Lace Drift', mode: 'video', src: 'lace1.mp4', poster: 'heidi-in-bg.png' },
+        heidi: { kicker: 'Beauty', title: 'Glass Light', mode: 'image', image: 'heidi-in-bg.png' },
+        o: { kicker: 'Street', title: 'City Pulse', mode: 'video', src: 'o.mp4', poster: '1st-duck.png' },
+        'heidi-alt': { kicker: 'Street', title: 'Sidewalk Silhouette', mode: 'image', image: 'heidi-in-bg.png' },
+        'duck-street': { kicker: 'Street', title: 'Square Study', mode: 'image', image: '1st-duck.png' },
+        'lace-beauty': { kicker: 'Beauty', title: 'Veil Motion', mode: 'video', src: 'lace1.mp4', poster: 'heidi-in-bg.png' },
+        'o-beauty': { kicker: 'Beauty', title: 'Afterglow', mode: 'video', src: 'o.mp4', poster: 'heidi-in-bg.png' },
+        'duck-wellness': { kicker: 'Wellness', title: 'Quiet Form', mode: 'image', image: '1st-duck.png' },
+      };
+
+      function applyStoryFromQuery() {
+        var params = new URLSearchParams(window.location.search);
+        var key = (params.get('s') || '').toLowerCase();
+        var story = STORIES[key];
+        var video = document.getElementById('hero-video');
+        var image = document.getElementById('hero-image');
+        var kickerEl = document.getElementById('hero-kicker-text');
+        var titleEl = document.getElementById('hero-title-text');
+        if (!story || !video || !image) return;
+
+        if (kickerEl) kickerEl.textContent = story.kicker;
+        if (titleEl) titleEl.textContent = story.title;
+        document.title = 'Aura St. Claire — ' + story.title;
+
+        if (story.mode === 'image') {
+          video.classList.add('is-hidden');
+          image.classList.add('is-active');
+          image.removeAttribute('hidden');
+          image.src = story.image;
+          image.alt = '';
+          try {
+            video.pause();
+          } catch (e) {}
+        } else {
+          image.classList.remove('is-active');
+          video.classList.remove('is-hidden');
+          var source = video.querySelector('source');
+          if (source) source.setAttribute('src', story.src);
+          video.setAttribute('poster', story.poster || 'heidi-in-bg.png');
+          video.load();
+          video.play().catch(function () {});
+        }
+      }
+
+      applyStoryFromQuery();
+
+      var navBtn = document.getElementById('nav-categories-btn');
+      var navPanel = document.getElementById('nav-categories-panel');
+      function setNavOpen(open) {
+        if (!navPanel || !navBtn) return;
+        navPanel.classList.toggle('is-open', open);
+        navBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        navPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+      if (navBtn && navPanel) {
+        navBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          setNavOpen(!navPanel.classList.contains('is-open'));
+        });
+        document.addEventListener('click', function () {
+          setNavOpen(false);
+        });
+        navPanel.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      }
+
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       function revealHero() {

@@ -21,7 +21,31 @@
     };
   </script>
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .site-nav-glass {
+      background: rgba(255, 255, 255, 0.55);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+
+    .anchor-section {
+      scroll-margin-top: 6rem;
+    }
+
+    .nav-dropdown-panel {
+      display: none;
+    }
+    .nav-dropdown-panel.is-open {
+      display: block;
+    }
+
     @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
       .js-hero-kicker,
       .js-hero-title,
       .js-reveal-story,
@@ -85,10 +109,45 @@
   </style>
 </head>
 <body class="bg-white font-sans text-neutral-900 antialiased">
+  <!-- Global nav -->
+  <header class="site-nav-glass sticky top-0 z-50 w-full border-b border-black/5">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <a href="home.html" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
+      <nav class="flex items-center gap-1 text-sm font-medium text-neutral-800 sm:gap-3" aria-label="Primary">
+        <a href="home.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
+        <a href="archive.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Archive</a>
+        <div class="relative" id="nav-categories-wrap">
+          <button
+            type="button"
+            id="nav-categories-btn"
+            class="flex items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white/60"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="nav-categories-panel"
+          >
+            Categories
+            <span class="text-xs text-neutral-500" aria-hidden="true">▾</span>
+          </button>
+          <div
+            id="nav-categories-panel"
+            class="nav-dropdown-panel absolute right-0 mt-2 min-w-[11rem] rounded-xl border border-black/5 bg-white/95 py-2 shadow-lg backdrop-blur-md"
+            style="-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);"
+            role="menu"
+            aria-hidden="true"
+          >
+            <a href="home.html#section-wellness" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Wellness</a>
+            <a href="home.html#section-street" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Street</a>
+            <a href="home.html#section-beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
   <!-- Mobile: stacked hero (standard). Desktop lg+: sticky half-width video + scroll column (editorial). Video: original.mp4 everywhere. -->
-  <div class="flex min-h-[100dvh] flex-col lg:min-h-screen lg:flex-row">
+  <div class="flex min-h-[calc(100dvh-4rem)] flex-col lg:min-h-[calc(100dvh-4rem)] lg:flex-row">
     <aside
-      class="relative h-[60vh] min-h-[280px] w-full shrink-0 overflow-hidden bg-neutral-950 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:w-1/2"
+      class="relative h-[60vh] min-h-[280px] w-full shrink-0 overflow-hidden bg-neutral-950 lg:sticky lg:top-[4rem] lg:h-[calc(100dvh-4rem)] lg:min-h-0 lg:w-1/2"
     >
       <video
         class="absolute inset-0 h-full w-full object-cover"
@@ -121,6 +180,50 @@
     </aside>
 
     <div class="w-full lg:w-1/2 lg:shrink-0">
+      <!-- Stories row: below hero column, scrolls with main -->
+      <section
+        class="border-b border-neutral-200/80 bg-white/90 px-5 py-8 backdrop-blur-sm sm:px-8 lg:px-10 xl:px-14"
+        aria-label="Story categories"
+        style="-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);"
+      >
+        <p class="text-center text-xs font-medium uppercase tracking-[0.3em] text-neutral-500 lg:text-left">Stories</p>
+        <div class="mt-5 flex justify-center gap-8 overflow-x-auto pb-1 lg:justify-start lg:gap-10">
+          <a
+            href="#section-wellness"
+            class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+          >
+            <span
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-emerald-50 to-white text-sm font-semibold text-emerald-900 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
+              aria-hidden="true"
+              >W</span
+            >
+            <span class="text-xs font-medium text-neutral-700">Wellness</span>
+          </a>
+          <a
+            href="#section-street"
+            class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+          >
+            <span
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-amber-50 to-white text-sm font-semibold text-amber-950 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
+              aria-hidden="true"
+              >S</span
+            >
+            <span class="text-xs font-medium text-neutral-700">Street</span>
+          </a>
+          <a
+            href="#section-beauty"
+            class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+          >
+            <span
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-rose-50 to-white text-sm font-semibold text-rose-950 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
+              aria-hidden="true"
+              >B</span
+            >
+            <span class="text-xs font-medium text-neutral-700">Beauty</span>
+          </a>
+        </div>
+      </section>
+
       <main
         class="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8 md:py-16 lg:max-w-none lg:px-10 lg:py-14 lg:text-left xl:px-14"
       >
@@ -136,86 +239,234 @@
           </p>
         </article>
 
-        <section class="js-reveal-collection mt-14 md:mt-20 lg:mt-16" aria-labelledby="collection-heading">
-          <h2
-            id="collection-heading"
-            class="js-reveal-collection-title font-serif text-2xl font-semibold transition-all duration-1000 ease-out sm:text-3xl text-center lg:text-left"
-          >
-            The Collection
-          </h2>
-          <div
-            class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-2 lg:gap-x-6 lg:gap-y-10"
-          >
-            <article
-              class="js-reveal-card group flex flex-col border border-neutral-200 bg-white shadow-sm"
-            >
-              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
-                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-              </div>
-              <div class="flex flex-1 flex-col p-5 sm:p-6">
-                <h3 class="font-serif text-xl font-semibold">Noir Silk</h3>
-                <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
-                <a
-                  href="#"
-                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
-                >
-                  Shop the Look
-                </a>
-              </div>
-            </article>
-            <article
-              class="js-reveal-card group flex flex-col border border-neutral-200 bg-white shadow-sm"
-            >
-              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
-                <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-              </div>
-              <div class="flex flex-1 flex-col p-5 sm:p-6">
-                <h3 class="font-serif text-xl font-semibold">Lace Column</h3>
-                <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
-                <a
-                  href="#"
-                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
-                >
-                  Shop the Look
-                </a>
-              </div>
-            </article>
-            <article
-              class="js-reveal-card group flex flex-col border border-neutral-200 bg-white shadow-sm"
-            >
-              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
-                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-              </div>
-              <div class="flex flex-1 flex-col p-5 sm:p-6">
-                <h3 class="font-serif text-xl font-semibold">Ivory Tailoring</h3>
-                <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
-                <a
-                  href="#"
-                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
-                >
-                  Shop the Look
-                </a>
-              </div>
-            </article>
-            <article
-              class="js-reveal-card group flex flex-col border border-neutral-200 bg-white shadow-sm"
-            >
-              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
-                <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-              </div>
-              <div class="flex flex-1 flex-col p-5 sm:p-6">
-                <h3 class="font-serif text-xl font-semibold">Midnight Cape</h3>
-                <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
-                <a
-                  href="#"
-                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
-                >
-                  Shop the Look
-                </a>
-              </div>
-            </article>
-          </div>
-        </section>
+        <div class="js-reveal-collection mt-14 space-y-16 md:mt-20 md:space-y-20 lg:mt-16">
+          <section id="section-wellness" class="anchor-section js-reveal-collection-section" aria-labelledby="wellness-heading">
+            <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-end">
+              <h2
+                id="wellness-heading"
+                class="js-reveal-collection-title font-serif text-2xl font-semibold transition-all duration-1000 ease-out sm:text-3xl text-center lg:text-left"
+              >
+                Wellness
+              </h2>
+              <a
+                href="archive.html?cat=wellness"
+                class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline"
+              >
+                View All
+              </a>
+            </div>
+            <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
+              <a
+                href="single-story.html?s=duck"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Noir Silk</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=lace"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Lace Column</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=duck-wellness"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Quiet Form</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Balanced proportions for slow mornings.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section id="section-street" class="anchor-section js-reveal-collection-section" aria-labelledby="street-heading">
+            <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-end">
+              <h2
+                id="street-heading"
+                class="js-reveal-collection-title font-serif text-2xl font-semibold transition-all duration-1000 ease-out sm:text-3xl text-center lg:text-left"
+              >
+                Street
+              </h2>
+              <a
+                href="archive.html?cat=street"
+                class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline"
+              >
+                View All
+              </a>
+            </div>
+            <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-2 lg:gap-x-6 lg:gap-y-10">
+              <a
+                href="single-story.html?s=heidi-alt"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Sidewalk Silhouette</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Long lines, city haze, confident stride.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=duck-street"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Square Study</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Graphic crop built for the pavement.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=o"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Ivory Tailoring</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=o"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">City Pulse</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Rhythm, grit, and late trains home.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <section id="section-beauty" class="anchor-section js-reveal-collection-section" aria-labelledby="beauty-heading">
+            <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-end">
+              <h2
+                id="beauty-heading"
+                class="js-reveal-collection-title font-serif text-2xl font-semibold transition-all duration-1000 ease-out sm:text-3xl text-center lg:text-left"
+              >
+                Beauty
+              </h2>
+              <a
+                href="archive.html?cat=beauty"
+                class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline"
+              >
+                View All
+              </a>
+            </div>
+            <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
+              <a
+                href="single-story.html?s=heidi"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Glass Light</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Portrait in soft focus and glass tones.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=lace-beauty"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Midnight Cape</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+              <a
+                href="single-story.html?s=o-beauty"
+                class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+              >
+                <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+                </div>
+                <div class="flex flex-1 flex-col p-5 sm:p-6">
+                  <h3 class="font-serif text-xl font-semibold">Afterglow</h3>
+                  <p class="mt-2 flex-1 text-sm text-neutral-600">Warm light on bare shoulders.</p>
+                  <span
+                    class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full"
+                  >
+                    Shop the Look
+                  </span>
+                </div>
+              </a>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
   </div>
@@ -250,8 +501,29 @@
 
       var story = document.querySelector('.js-reveal-story');
       var collection = document.querySelector('.js-reveal-collection');
-      var collectionTitle = document.querySelector('.js-reveal-collection-title');
+      var collectionTitles = document.querySelectorAll('.js-reveal-collection-title');
       var cards = document.querySelectorAll('.js-reveal-card');
+
+      var navBtn = document.getElementById('nav-categories-btn');
+      var navPanel = document.getElementById('nav-categories-panel');
+      function setNavOpen(open) {
+        if (!navPanel || !navBtn) return;
+        navPanel.classList.toggle('is-open', open);
+        navBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        navPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+      if (navBtn && navPanel) {
+        navBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          setNavOpen(!navPanel.classList.contains('is-open'));
+        });
+        document.addEventListener('click', function () {
+          setNavOpen(false);
+        });
+        navPanel.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      }
 
       var observer = new IntersectionObserver(
         function (entries) {
@@ -262,7 +534,9 @@
               t.classList.add('active');
               observer.unobserve(t);
             } else if (t === collection) {
-              if (collectionTitle) collectionTitle.classList.add('active');
+              collectionTitles.forEach(function (titleEl) {
+                titleEl.classList.add('active');
+              });
               if (reduced) {
                 cards.forEach(function (c) {
                   c.classList.add('active');

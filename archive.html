@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .site-nav-glass {
+      background: rgba(255, 255, 255, 0.55);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+
+    .archive-masonry {
+      column-count: 2;
+      column-gap: 1rem;
+    }
+    @media (min-width: 640px) {
+      .archive-masonry {
+        column-count: 3;
+      }
+    }
+    @media (min-width: 1024px) {
+      .archive-masonry {
+        column-count: 4;
+      }
+    }
+
+    .archive-masonry__brick {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+    }
+
+    .archive-tile {
+      display: block;
+      overflow: hidden;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.06);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .archive-tile:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 50px -12px rgb(0 0 0 / 0.22), 0 14px 28px -14px rgb(0 0 0 / 0.14);
+    }
+    .archive-tile:focus-visible {
+      outline: 2px solid rgba(23, 23, 23, 0.9);
+      outline-offset: 3px;
+    }
+
+    .archive-masonry__brick.is-hidden {
+      display: none;
+    }
+
+    .filter-pill.is-active {
+      background-color: rgb(23 23 23);
+      color: white;
+      border-color: rgb(23 23 23);
+    }
+
+    .nav-dropdown-panel {
+      display: none;
+    }
+    .nav-dropdown-panel.is-open {
+      display: block;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      .archive-tile {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-[100dvh] font-sans text-neutral-900 antialiased">
+  <!-- Quiet static backdrop -->
+  <div class="pointer-events-none fixed inset-0 z-0 bg-neutral-950" aria-hidden="true">
+    <img
+      src="heidi-in-bg.png"
+      alt=""
+      class="absolute inset-0 h-full w-full object-cover opacity-90"
+      width="1920"
+      height="1080"
+    />
+    <div class="absolute inset-0 bg-black/45"></div>
+  </div>
+
+  <div class="relative z-10">
+    <!-- Global nav -->
+    <header
+      class="site-nav-glass sticky top-0 z-50 border-b border-white/30"
+    >
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <a href="home.html" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
+        <nav class="flex items-center gap-1 text-sm font-medium text-neutral-800 sm:gap-3" aria-label="Primary">
+          <a href="home.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
+          <a href="archive.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Archive</a>
+          <div class="relative" id="nav-categories-wrap">
+            <button
+              type="button"
+              id="nav-categories-btn"
+              class="flex items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white/60"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="nav-categories-panel"
+            >
+              Categories
+              <span class="text-xs text-neutral-500" aria-hidden="true">▾</span>
+            </button>
+            <div
+              id="nav-categories-panel"
+              class="nav-dropdown-panel absolute right-0 mt-2 min-w-[11rem] rounded-xl border border-white/50 bg-white/85 py-2 shadow-lg backdrop-blur-md"
+              style="-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);"
+              role="menu"
+              aria-hidden="true"
+            >
+              <a href="archive.html?cat=wellness" class="block px-4 py-2 text-left text-sm hover:bg-white/80" role="menuitem">Wellness</a>
+              <a href="archive.html?cat=street" class="block px-4 py-2 text-left text-sm hover:bg-white/80" role="menuitem">Street</a>
+              <a href="archive.html?cat=beauty" class="block px-4 py-2 text-left text-sm hover:bg-white/80" role="menuitem">Beauty</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-6xl px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-28 lg:pt-14">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="text-xs font-medium uppercase tracking-[0.35em] text-white/85">Aura St. Claire</p>
+        <h1 class="mt-3 font-serif text-4xl font-semibold text-white drop-shadow-sm sm:text-5xl">Archive</h1>
+        <p class="mt-4 text-sm leading-relaxed text-white/85 sm:text-base">
+          A quiet editorial wall — imagery, motion, and mood in one place.
+        </p>
+      </div>
+
+      <!-- Filter bar -->
+      <div
+        id="archive-filters"
+        class="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/40 bg-white/60 p-3 shadow-lg backdrop-blur-md sm:mt-12"
+        style="-webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);"
+        role="toolbar"
+        aria-label="Filter by category"
+      >
+        <button type="button" class="filter-pill is-active rounded-full border border-neutral-900/10 bg-white/80 px-4 py-2 text-xs font-medium uppercase tracking-wide text-neutral-800 transition hover:border-neutral-900/30 sm:text-sm" data-filter="all">All</button>
+        <button type="button" class="filter-pill rounded-full border border-neutral-900/10 bg-white/80 px-4 py-2 text-xs font-medium uppercase tracking-wide text-neutral-800 transition hover:border-neutral-900/30 sm:text-sm" data-filter="wellness">Wellness</button>
+        <button type="button" class="filter-pill rounded-full border border-neutral-900/10 bg-white/80 px-4 py-2 text-xs font-medium uppercase tracking-wide text-neutral-800 transition hover:border-neutral-900/30 sm:text-sm" data-filter="street">Street</button>
+        <button type="button" class="filter-pill rounded-full border border-neutral-900/10 bg-white/80 px-4 py-2 text-xs font-medium uppercase tracking-wide text-neutral-800 transition hover:border-neutral-900/30 sm:text-sm" data-filter="beauty">Beauty</button>
+      </div>
+
+      <!-- Pinterest-style masonry -->
+      <div class="archive-masonry mx-auto mt-10 max-w-6xl sm:mt-12" id="archive-grid">
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=duck" class="archive-tile" data-category="wellness">
+            <div class="relative aspect-[3/4] overflow-hidden bg-neutral-200/40">
+              <img src="1st-duck.png" alt="Wellness study" class="h-full w-full object-cover" width="600" height="800" />
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Wellness</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Noir Silk</p>
+              <p class="mt-1 text-xs text-neutral-600">Still life — editorial calm.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=lace" class="archive-tile" data-category="wellness">
+            <div class="relative aspect-[9/16] overflow-hidden bg-neutral-900">
+              <video class="h-full w-full object-cover" autoplay muted loop playsinline poster="heidi-in-bg.png">
+                <source src="lace1.mp4" type="video/mp4" />
+              </video>
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Wellness</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Lace Drift</p>
+              <p class="mt-1 text-xs text-neutral-600">Vertical motion study.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=heidi" class="archive-tile" data-category="beauty">
+            <div class="relative aspect-[4/5] overflow-hidden bg-neutral-200/40">
+              <img src="heidi-in-bg.png" alt="Beauty portrait" class="h-full w-full object-cover" width="600" height="800" />
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Beauty</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Glass Light</p>
+              <p class="mt-1 text-xs text-neutral-600">Portrait in soft focus.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=o" class="archive-tile" data-category="street">
+            <div class="relative aspect-video overflow-hidden bg-neutral-900">
+              <video class="h-full w-full object-cover" autoplay muted loop playsinline poster="1st-duck.png">
+                <source src="o.mp4" type="video/mp4" />
+              </video>
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Street</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">City Pulse</p>
+              <p class="mt-1 text-xs text-neutral-600">Wide frame — rhythm and grit.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=heidi-alt" class="archive-tile" data-category="street">
+            <div class="relative aspect-[2/3] overflow-hidden bg-neutral-200/40">
+              <img src="heidi-in-bg.png" alt="Street silhouette" class="h-full w-full object-cover" width="600" height="800" />
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Street</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Sidewalk Silhouette</p>
+              <p class="mt-1 text-xs text-neutral-600">Tall crop for the feed wall.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=duck-street" class="archive-tile" data-category="street">
+            <div class="relative aspect-square overflow-hidden bg-neutral-200/40">
+              <img src="1st-duck.png" alt="Street still" class="h-full w-full object-cover" width="600" height="600" />
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Street</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Square Study</p>
+              <p class="mt-1 text-xs text-neutral-600">Compact tile, high contrast.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=lace-beauty" class="archive-tile" data-category="beauty">
+            <div class="relative aspect-[3/5] overflow-hidden bg-neutral-900">
+              <video class="h-full w-full object-cover" autoplay muted loop playsinline poster="heidi-in-bg.png">
+                <source src="lace1.mp4" type="video/mp4" />
+              </video>
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Beauty</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Veil Motion</p>
+              <p class="mt-1 text-xs text-neutral-600">Soft light through lace.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=o-beauty" class="archive-tile" data-category="beauty">
+            <div class="relative aspect-[9/14] overflow-hidden bg-neutral-900">
+              <video class="h-full w-full object-cover" autoplay muted loop playsinline poster="heidi-in-bg.png">
+                <source src="o.mp4" type="video/mp4" />
+              </video>
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Beauty</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Afterglow</p>
+              <p class="mt-1 text-xs text-neutral-600">Tall motion frame.</p>
+            </div>
+          </a>
+        </div>
+
+        <div class="archive-masonry__brick">
+          <a href="single-story.html?s=duck-wellness" class="archive-tile" data-category="wellness">
+            <div class="relative aspect-[5/6] overflow-hidden bg-neutral-200/40">
+              <img src="1st-duck.png" alt="Wellness minimal" class="h-full w-full object-cover" width="600" height="720" />
+              <span class="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">Wellness</span>
+            </div>
+            <div class="px-4 py-3">
+              <p class="font-serif text-lg font-semibold text-neutral-900">Quiet Form</p>
+              <p class="mt-1 text-xs text-neutral-600">Balanced crop for the grid.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="px-4 pb-10 text-center text-sm text-white/75 sm:px-6">
+      Aura St. Claire — Archive · Quiet wall
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var wrap = document.getElementById('nav-categories-wrap');
+      var btn = document.getElementById('nav-categories-btn');
+      var panel = document.getElementById('nav-categories-panel');
+
+      function setOpen(open) {
+        if (!panel || !btn) return;
+        panel.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+
+      if (btn && panel) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          setOpen(!panel.classList.contains('is-open'));
+        });
+        document.addEventListener('click', function () {
+          setOpen(false);
+        });
+        panel.addEventListener('click', function (e) {
+          e.stopPropagation();
+        });
+      }
+
+      var pills = document.querySelectorAll('.filter-pill');
+      var tiles = document.querySelectorAll('#archive-grid .archive-tile');
+
+      function applyFilter(cat) {
+        pills.forEach(function (p) {
+          p.classList.toggle('is-active', p.getAttribute('data-filter') === cat);
+        });
+        tiles.forEach(function (tile) {
+          var brick = tile.closest('.archive-masonry__brick');
+          var t = tile.getAttribute('data-category') || '';
+          var show = cat === 'all' || t === cat;
+          if (brick) brick.classList.toggle('is-hidden', !show);
+        });
+      }
+
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          applyFilter(pill.getAttribute('data-filter') || 'all');
+        });
+      });
+
+      function readQuery() {
+        var m = window.location.search.match(/[?&]cat=([^&]+)/);
+        return m ? decodeURIComponent(m[1]).toLowerCase() : null;
+      }
+
+      var q = readQuery();
+      if (q && ['wellness', 'street', 'beauty'].indexOf(q) !== -1) {
+        applyFilter(q);
+      } else {
+        applyFilter('all');
+      }
+    })();
+  </script>
+</body>
+</html>
