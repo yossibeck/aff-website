@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Living Background</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      .reveal-from-bottom {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+    .reveal-from-bottom {
+      opacity: 0;
+      transform: translateY(3rem);
+      transition:
+        opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal-from-bottom.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="font-sans text-white antialiased">
+  <!-- Fixed full-screen video -->
+  <div class="pointer-events-none fixed inset-0 z-0 h-[100dvh] w-full overflow-hidden bg-neutral-950" aria-hidden="true">
+    <video
+      class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
+      style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
+      autoplay
+      muted
+      loop
+      playsinline
+      poster="heidi-in-bg.png"
+    >
+      <source src="original.mp4" type="video/mp4" />
+    </video>
+    <!-- Subtle vignette -->
+    <div
+      class="absolute inset-0"
+      style="box-shadow: inset 0 0 120px rgba(0,0,0,0.45), inset 0 0 280px rgba(0,0,0,0.25);"
+    ></div>
+    <!-- Glass atmosphere layer -->
+    <div
+      class="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
+      style="-webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);"
+    ></div>
+  </div>
+
+  <!-- Scrollable layer -->
+  <div class="relative z-10">
+    <header class="px-5 pb-6 pt-16 text-center sm:px-8 sm:pt-24 md:px-12">
+      <p class="text-xs font-medium uppercase tracking-[0.35em] text-white/85">Aura St. Claire</p>
+      <h1 class="mt-4 font-serif text-4xl font-semibold leading-tight text-white sm:text-5xl md:text-6xl">
+        Living Background
+      </h1>
+      <p class="mx-auto mt-4 max-w-md text-sm text-white/70">Step inside the frame — story and pieces rise as you scroll.</p>
+    </header>
+
+    <main class="mx-auto max-w-3xl px-5 pb-20 sm:px-8 md:pb-28 lg:px-10">
+      <article
+        data-reveal
+        class="reveal-from-bottom rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-xl sm:p-8 md:p-10"
+        style="-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);"
+      >
+        <h2 class="font-serif text-2xl font-semibold text-white sm:text-3xl">Editorial Note</h2>
+        <p class="mt-5 text-base leading-relaxed text-white/85 sm:text-lg">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        </p>
+        <p class="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in.
+        </p>
+      </article>
+
+      <section class="mt-10 md:mt-14" aria-labelledby="bg-vibe-collection">
+        <h2
+          id="bg-vibe-collection"
+          data-reveal
+          class="reveal-from-bottom mb-8 text-center font-serif text-2xl font-semibold text-white sm:mb-10 sm:text-3xl"
+        >
+          The Collection
+        </h2>
+
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:gap-8">
+          <article
+            data-reveal
+            data-reveal-delay="80"
+            class="reveal-from-bottom group flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl"
+            style="-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-white/5">
+              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-white">Noir Silk</h3>
+              <p class="mt-2 flex-1 text-sm text-white/75">Evening drape with architectural shoulders.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-white/40 bg-white/10 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35)] active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            data-reveal
+            data-reveal-delay="160"
+            class="reveal-from-bottom group flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl"
+            style="-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-white/5">
+              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-white">Lace Column</h3>
+              <p class="mt-2 flex-1 text-sm text-white/75">Sheer paneling over a sculpted silhouette.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-white/40 bg-white/10 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35)] active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            data-reveal
+            data-reveal-delay="240"
+            class="reveal-from-bottom group flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl"
+            style="-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-white/5">
+              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-white">Ivory Tailoring</h3>
+              <p class="mt-2 flex-1 text-sm text-white/75">Sharp lapels, softened by fluid wool.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-white/40 bg-white/10 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35)] active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            data-reveal
+            data-reveal-delay="320"
+            class="reveal-from-bottom group flex flex-col overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-xl"
+            style="-webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-white/5">
+              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-white">Midnight Cape</h3>
+              <p class="mt-2 flex-1 text-sm text-white/75">Movement in matte satin, floor-skimming.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-white/40 bg-white/10 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-white hover:bg-white/20 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.35)] active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="relative z-10 px-5 pb-14 text-center text-sm text-white/60 sm:px-8">
+      Aura St. Claire — Living Background
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      var nodes = document.querySelectorAll('[data-reveal]');
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el = entry.target;
+            var delay = parseInt(el.getAttribute('data-reveal-delay') || '0', 10);
+            window.setTimeout(function () {
+              el.classList.add('is-visible');
+            }, delay);
+            observer.unobserve(el);
+          });
+        },
+        { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      );
+      nodes.forEach(function (n) {
+        observer.observe(n);
+      });
+    })();
+  </script>
+</body>
+</html>

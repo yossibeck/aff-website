@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Single Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      .js-hero-kicker,
+      .js-hero-title,
+      .js-reveal-story,
+      .js-reveal-collection-title,
+      .js-reveal-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+    }
+
+    .js-hero-kicker {
+      opacity: 0;
+    }
+    .js-hero-kicker.active {
+      opacity: 1;
+    }
+
+    .js-hero-title {
+      opacity: 0;
+      transform: translateX(-2.75rem);
+    }
+    .js-hero-title.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .js-reveal-story,
+    .js-reveal-collection-title {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 700ms ease-out, transform 700ms ease-out;
+    }
+    .js-reveal-story.active,
+    .js-reveal-collection-title.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .js-reveal-card {
+      opacity: 0;
+      transform: translateY(60px) scale(0.95);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.06);
+      transition:
+        opacity 700ms ease-out,
+        transform 700ms ease-out,
+        box-shadow 300ms ease-out;
+    }
+    .js-reveal-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .js-reveal-card.active:hover {
+      transform: translateY(-8px) scale(1);
+      box-shadow:
+        0 26px 50px -12px rgb(0 0 0 / 0.28),
+        0 14px 28px -14px rgb(0 0 0 / 0.18);
+    }
+  </style>
+</head>
+<body class="font-sans text-neutral-900 antialiased">
+  <!-- Fixed full-screen video -->
+  <div class="fixed inset-0 z-0 h-[100dvh] w-full overflow-hidden bg-neutral-950" aria-hidden="true">
+    <video
+      class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
+      style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
+      autoplay
+      muted
+      loop
+      playsinline
+      poster="heidi-in-bg.png"
+    >
+      <source src="lace1.mp4" type="video/mp4" />
+    </video>
+    <!-- 40% dark overlay -->
+    <div class="absolute inset-0 bg-black/40"></div>
+  </div>
+
+  <!-- Scrolling content over video -->
+  <div class="relative z-10 min-h-[100dvh]">
+    <header class="px-5 pb-8 pt-14 text-center sm:px-8 sm:pt-20 md:px-12">
+      <p
+        class="js-hero-kicker text-xs font-medium uppercase tracking-[0.35em] text-white/90 transition-all duration-700 ease-out"
+      >
+        Aura St. Claire
+      </p>
+      <h1
+        class="js-hero-title mt-4 font-serif text-4xl font-semibold leading-tight text-white drop-shadow-sm transition-all duration-700 ease-out sm:text-5xl md:text-6xl"
+      >
+        The Immersive Vibe
+      </h1>
+    </header>
+
+    <main class="mx-auto max-w-3xl space-y-8 px-5 pb-16 sm:px-8 md:space-y-10 md:pb-24 lg:px-10">
+      <!-- Glass story card -->
+      <article
+        class="js-reveal-story rounded-2xl border border-white/40 bg-white/75 p-6 shadow-xl backdrop-blur-md sm:p-8 md:p-10"
+        style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+      >
+        <h2 class="font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">Editorial Note</h2>
+        <p class="mt-5 text-base leading-relaxed text-neutral-700 sm:text-lg">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        </p>
+        <p class="mt-4 text-base leading-relaxed text-neutral-700 sm:text-lg">
+          Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in.
+        </p>
+      </article>
+
+      <!-- Glass products -->
+      <section class="js-reveal-collection" aria-labelledby="immersive-collection">
+        <h2
+          id="immersive-collection"
+          class="js-reveal-collection-title mb-8 rounded-2xl border border-white/40 bg-white/60 px-6 py-4 text-center font-serif text-2xl font-semibold text-neutral-900 shadow-lg backdrop-blur-md sm:mb-10 sm:text-3xl"
+          style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+        >
+          The Collection
+        </h2>
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:gap-8">
+          <article
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md sm:min-h-0"
+            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
+              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-neutral-900">Noir Silk</h3>
+              <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
+              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-neutral-900">Lace Column</h3>
+              <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
+              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-neutral-900">Ivory Tailoring</h3>
+              <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+
+          <article
+            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 backdrop-blur-md"
+            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
+          >
+            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
+              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            </div>
+            <div class="flex flex-1 flex-col p-5 sm:p-6">
+              <h3 class="font-serif text-xl font-semibold text-neutral-900">Midnight Cape</h3>
+              <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
+              <a
+                href="#"
+                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white hover:tracking-[0.2em] hover:shadow-lg active:scale-[0.98] sm:min-h-[52px]"
+              >
+                Shop the Look
+              </a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="relative z-10 px-5 pb-12 text-center text-sm text-white/80 sm:px-8">
+      Aura St. Claire — Focus concept: Immersive Vibe
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function revealHero() {
+        var kicker = document.querySelector('.js-hero-kicker');
+        var title = document.querySelector('.js-hero-title');
+        if (reduced) {
+          if (kicker) kicker.classList.add('active');
+          if (title) title.classList.add('active');
+          return;
+        }
+        requestAnimationFrame(function () {
+          if (kicker) {
+            kicker.style.transitionDelay = '0ms';
+            kicker.classList.add('active');
+          }
+          if (title) {
+            title.style.transitionDelay = '500ms';
+            title.classList.add('active');
+          }
+        });
+      }
+
+      var story = document.querySelector('.js-reveal-story');
+      var collection = document.querySelector('.js-reveal-collection');
+      var collectionTitle = document.querySelector('.js-reveal-collection-title');
+      var cards = document.querySelectorAll('.js-reveal-card');
+
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var t = entry.target;
+            if (t === story) {
+              t.classList.add('active');
+              observer.unobserve(t);
+            } else if (t === collection) {
+              if (collectionTitle) collectionTitle.classList.add('active');
+              if (reduced) {
+                cards.forEach(function (c) {
+                  c.classList.add('active');
+                });
+              } else {
+                cards.forEach(function (card, i) {
+                  window.setTimeout(function () {
+                    card.classList.add('active');
+                  }, i * 150);
+                });
+              }
+              observer.unobserve(t);
+            }
+          });
+        },
+        { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+      );
+
+      if (story) observer.observe(story);
+      if (collection) observer.observe(collection);
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', revealHero);
+      } else {
+        revealHero();
+      }
+    })();
+  </script>
+</body>
+</html>

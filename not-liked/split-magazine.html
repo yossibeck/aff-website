@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Split-Screen Magazine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+    }
+    .drop-cap::first-letter {
+      float: left;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 4.25rem;
+      line-height: 0.78;
+      padding-right: 0.55rem;
+      padding-top: 0.15rem;
+      font-weight: 600;
+      color: rgb(23 23 23);
+    }
+    @media (min-width: 640px) {
+      .drop-cap::first-letter {
+        font-size: 5.5rem;
+        line-height: 0.75;
+        padding-right: 0.65rem;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans bg-white text-neutral-900 antialiased">
+  <div class="flex min-h-[100dvh] flex-col lg:flex-row">
+    <!-- Video: fixed top half on mobile (content scrolls beneath); sticky full height on desktop -->
+    <aside
+      class="fixed inset-x-0 top-0 z-30 h-[50dvh] w-full overflow-hidden bg-neutral-950 lg:relative lg:sticky lg:top-0 lg:z-10 lg:h-screen lg:w-1/2 lg:shrink-0"
+    >
+      <video
+        class="h-full w-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="heidi-in-bg.png"
+      >
+        <source src="original.mp4" type="video/mp4" />
+      </video>
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10 lg:bg-gradient-to-r lg:from-transparent lg:to-black/15" aria-hidden="true"></div>
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:inset-auto lg:bottom-auto lg:left-0 lg:top-1/2 lg:w-full lg:-translate-y-1/2 lg:p-10 xl:p-12">
+        <p class="text-[10px] font-medium uppercase tracking-[0.4em] text-white/80 sm:text-xs">Aura St. Claire</p>
+        <h1 class="mt-3 max-w-sm font-serif text-2xl font-semibold leading-[1.15] text-white sm:text-3xl lg:text-4xl xl:text-[2.75rem]">
+          Split-Screen Magazine
+        </h1>
+      </div>
+    </aside>
+
+    <!-- Mobile flow spacer -->
+    <div class="h-[50dvh] shrink-0 lg:hidden" aria-hidden="true"></div>
+
+    <!-- Editorial + asymmetric product grid -->
+    <main
+      class="relative z-20 flex-1 bg-white lg:z-10 lg:w-1/2 lg:max-w-[50%]"
+    >
+      <div class="mx-auto max-w-xl px-6 py-12 sm:px-10 sm:py-16 md:px-12 md:py-20 lg:max-w-none lg:px-14 lg:py-16 xl:px-20 xl:py-20">
+        <article class="max-w-xl lg:max-w-md xl:max-w-lg">
+          <h2 class="font-serif text-[10px] font-semibold uppercase tracking-[0.35em] text-neutral-400">Editorial</h2>
+          <p
+            class="drop-cap mt-8 text-[15px] leading-[1.85] text-neutral-600 sm:text-base sm:leading-[1.9]"
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          </p>
+          <p class="mt-8 text-[15px] leading-[1.85] text-neutral-600 sm:text-base sm:leading-[1.9]">
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in. Integer vitae libero ac risus egestas placerat.
+          </p>
+        </article>
+
+        <section class="mt-20 sm:mt-24 lg:mt-28" aria-labelledby="mag-collection">
+          <div class="flex items-end justify-between gap-6 border-b border-neutral-900/10 pb-6">
+            <h2 id="mag-collection" class="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+              Selection
+            </h2>
+            <span class="hidden text-[10px] font-medium uppercase tracking-[0.3em] text-neutral-400 sm:inline">Vol. 01</span>
+          </div>
+
+          <!-- Asymmetrical grid -->
+          <div class="mt-12 grid grid-flow-dense grid-cols-6 gap-5 sm:gap-6 lg:gap-8">
+            <!-- Large feature -->
+            <article
+              class="group relative col-span-6 overflow-hidden rounded-sm border border-neutral-900/10 bg-white/10 shadow-sm backdrop-blur-xl sm:col-span-4"
+              style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+            >
+              <div class="aspect-[4/5] overflow-hidden bg-neutral-100 sm:aspect-[3/4]">
+                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]" width="800" height="1000" />
+              </div>
+              <div class="flex flex-col gap-3 p-6 sm:p-8 sm:pb-10">
+                <h3 class="font-serif text-xl font-semibold sm:text-2xl">Noir Silk</h3>
+                <p class="max-w-sm text-sm leading-relaxed text-neutral-600">Evening drape with architectural shoulders.</p>
+                <a
+                  href="#"
+                  class="shop-btn mt-2 inline-flex min-h-[48px] w-max items-center border-b border-neutral-900/30 pb-1 text-xs font-medium uppercase tracking-[0.28em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:tracking-[0.38em] active:opacity-70 sm:min-h-[52px] sm:pb-1.5"
+                >
+                  Shop
+                </a>
+              </div>
+            </article>
+
+            <!-- Tall narrow -->
+            <article
+              class="group relative col-span-6 flex min-h-0 flex-col overflow-hidden rounded-sm border border-neutral-900/10 bg-white/10 shadow-sm backdrop-blur-xl sm:col-span-2 sm:row-span-2 sm:min-h-[min(100%,520px)]"
+              style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+            >
+              <div class="aspect-[3/4] shrink-0 overflow-hidden bg-neutral-100 sm:aspect-auto sm:min-h-[55%] sm:flex-1">
+                <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]" width="600" height="900" />
+              </div>
+              <div class="flex flex-col gap-2 p-5 sm:p-6">
+                <h3 class="font-serif text-lg font-semibold">Lace Column</h3>
+                <p class="text-xs leading-relaxed text-neutral-600 sm:text-sm">Sheer paneling, sculpted line.</p>
+                <a
+                  href="#"
+                  class="shop-btn mt-auto inline-flex min-h-[48px] w-max items-center border-b border-neutral-900/30 pb-1 text-xs font-medium uppercase tracking-[0.28em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:tracking-[0.38em] active:opacity-70 sm:min-h-[52px]"
+                >
+                  Shop
+                </a>
+              </div>
+            </article>
+
+            <!-- Wide short -->
+            <article
+              class="group relative col-span-6 overflow-hidden rounded-sm border border-neutral-900/10 bg-white/10 shadow-sm backdrop-blur-xl sm:col-span-3"
+              style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+            >
+              <div class="grid sm:grid-cols-5">
+                <div class="aspect-[4/3] overflow-hidden bg-neutral-100 sm:col-span-2 sm:aspect-auto sm:min-h-[200px]">
+                  <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]" width="700" height="500" />
+                </div>
+                <div class="flex flex-col justify-center p-6 sm:col-span-3 sm:p-8">
+                  <h3 class="font-serif text-lg font-semibold sm:text-xl">Ivory Tailoring</h3>
+                  <p class="mt-2 text-sm text-neutral-600">Sharp lapels, fluid wool.</p>
+                  <a
+                    href="#"
+                    class="shop-btn mt-5 inline-flex min-h-[48px] w-max items-center border-b border-neutral-900/30 pb-1 text-xs font-medium uppercase tracking-[0.28em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:tracking-[0.38em] active:opacity-70 sm:mt-6 sm:min-h-[52px]"
+                  >
+                    Shop
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Medium -->
+            <article
+              class="group relative col-span-6 overflow-hidden rounded-sm border border-neutral-900/10 bg-white/10 shadow-sm backdrop-blur-xl sm:col-span-3"
+              style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+            >
+              <div class="aspect-[3/4] max-h-[420px] overflow-hidden bg-neutral-100 sm:max-h-none sm:aspect-[5/6]">
+                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]" width="700" height="840" />
+              </div>
+              <div class="p-6 sm:p-8">
+                <h3 class="font-serif text-lg font-semibold sm:text-xl">Midnight Cape</h3>
+                <p class="mt-2 text-sm text-neutral-600">Matte satin, floor-skimming.</p>
+                <a
+                  href="#"
+                  class="shop-btn mt-5 inline-flex min-h-[48px] w-max items-center border-b border-neutral-900/30 pb-1 text-xs font-medium uppercase tracking-[0.28em] text-neutral-900 transition-all duration-300 hover:border-neutral-900 hover:tracking-[0.38em] active:opacity-70 sm:mt-6 sm:min-h-[52px]"
+                >
+                  Shop
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <footer class="mt-24 border-t border-neutral-900/10 py-10 text-center text-[11px] uppercase tracking-[0.2em] text-neutral-400 sm:mt-32">
+          Aura St. Claire — Split Magazine
+        </footer>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

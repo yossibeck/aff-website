@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Modern Hero / Split Editorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-white font-sans text-neutral-900 antialiased">
+  <!-- Mobile: stacked hero (standard). Desktop lg+: sticky half-width video + scroll column (editorial). Video: original.mp4 everywhere. -->
+  <div class="flex min-h-[100dvh] flex-col lg:min-h-screen lg:flex-row">
+    <aside
+      class="relative h-[60vh] min-h-[280px] w-full shrink-0 overflow-hidden bg-neutral-950 lg:sticky lg:top-0 lg:h-screen lg:min-h-0 lg:w-1/2"
+    >
+      <video
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="heidi-in-bg.png"
+      >
+        <source src="original.mp4" type="video/mp4" />
+      </video>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20 lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-black/20"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="relative z-10 flex h-full flex-col justify-end px-5 pb-10 sm:px-8 md:px-12 lg:justify-center lg:px-10 lg:pb-0 lg:pt-0 xl:px-14"
+      >
+        <p class="mb-2 text-xs font-medium uppercase tracking-[0.35em] text-white/80 lg:text-white/85">Aura St. Claire</p>
+        <h1
+          class="font-serif text-4xl font-semibold leading-tight text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl"
+        >
+          The Modern Hero
+        </h1>
+      </div>
+    </aside>
+
+    <div class="w-full lg:w-1/2 lg:shrink-0">
+      <main
+        class="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8 md:py-16 lg:max-w-none lg:px-10 lg:py-14 lg:text-left xl:px-14"
+      >
+        <article class="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-none lg:text-left">
+          <h2 class="font-serif text-3xl font-semibold text-neutral-900 sm:text-4xl">Editorial Note</h2>
+          <p class="mt-6 text-left text-base leading-relaxed text-neutral-600 sm:text-lg">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+          </p>
+          <p class="mt-4 text-left text-base leading-relaxed text-neutral-600 sm:text-lg">
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in. Integer vitae libero ac risus egestas placerat.
+          </p>
+        </article>
+
+        <section class="mt-14 md:mt-20 lg:mt-16" aria-labelledby="collection-heading">
+          <h2
+            id="collection-heading"
+            class="font-serif text-2xl font-semibold sm:text-3xl text-center lg:text-left"
+          >
+            The Collection
+          </h2>
+          <div
+            class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-2 lg:gap-x-6 lg:gap-y-10"
+          >
+            <article class="group flex flex-col border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+              </div>
+              <div class="flex flex-1 flex-col p-5 sm:p-6">
+                <h3 class="font-serif text-xl font-semibold">Noir Silk</h3>
+                <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
+                <a
+                  href="#"
+                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
+                >
+                  Shop the Look
+                </a>
+              </div>
+            </article>
+            <article class="group flex flex-col border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+              </div>
+              <div class="flex flex-1 flex-col p-5 sm:p-6">
+                <h3 class="font-serif text-xl font-semibold">Lace Column</h3>
+                <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
+                <a
+                  href="#"
+                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
+                >
+                  Shop the Look
+                </a>
+              </div>
+            </article>
+            <article class="group flex flex-col border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+              </div>
+              <div class="flex flex-1 flex-col p-5 sm:p-6">
+                <h3 class="font-serif text-xl font-semibold">Ivory Tailoring</h3>
+                <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
+                <a
+                  href="#"
+                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
+                >
+                  Shop the Look
+                </a>
+              </div>
+            </article>
+            <article class="group flex flex-col border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+              <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+              </div>
+              <div class="flex flex-1 flex-col p-5 sm:p-6">
+                <h3 class="font-serif text-xl font-semibold">Midnight Cape</h3>
+                <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
+                <a
+                  href="#"
+                  class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 hover:border-neutral-700 hover:bg-white hover:text-neutral-900 hover:shadow-lg active:scale-[0.98] sm:min-h-[52px] lg:w-full"
+                >
+                  Shop the Look
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <footer class="border-t border-neutral-200 py-10 text-center text-sm text-neutral-500">
+    Aura St. Claire — Mobile: Modern Hero · Desktop: Split Editorial (same film)
+  </footer>
+</body>
+</html>

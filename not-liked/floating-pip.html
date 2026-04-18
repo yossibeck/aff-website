@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aura St. Claire — Floating Mini-Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            pip: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 12px 24px -8px rgba(0, 0, 0, 0.2)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+      #pip-shell {
+        transition: none !important;
+      }
+    }
+
+    /* Hero: in-flow overlay on placeholder */
+    #pip-shell {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 50vh;
+      min-height: 260px;
+      z-index: 30;
+      overflow: hidden;
+      border-radius: 0;
+      border: 1px solid transparent;
+      background: transparent;
+      box-shadow: none;
+      transition:
+        top 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        left 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        right 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        border-radius 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.35s ease,
+        background-color 0.35s ease,
+        box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #pip-shell.is-pip {
+      position: fixed;
+      left: auto;
+      right: max(1rem, env(safe-area-inset-right));
+      top: auto;
+      bottom: max(1rem, env(safe-area-inset-bottom));
+      width: min(72vw, 300px);
+      height: calc(min(72vw, 300px) * 9 / 16);
+      min-height: 0;
+      border-radius: 1rem;
+      border-color: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.35),
+        0 12px 24px -8px rgba(0, 0, 0, 0.22);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+
+    @media (min-width: 640px) {
+      #pip-shell.is-pip {
+        width: min(38vw, 340px);
+        height: calc(min(38vw, 340px) * 9 / 16);
+        right: max(1.25rem, env(safe-area-inset-right));
+        bottom: max(1.25rem, env(safe-area-inset-bottom));
+        border-radius: 1.125rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      #pip-shell.is-pip {
+        width: 320px;
+        height: 180px;
+        right: max(1.5rem, env(safe-area-inset-right));
+        bottom: max(1.5rem, env(safe-area-inset-bottom));
+      }
+    }
+
+    #pip-shell.is-hidden {
+      display: none !important;
+    }
+
+    #pip-close {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.9);
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    }
+
+    #pip-shell.is-pip #pip-close {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+
+    #pip-shell video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Reserve space so PiP does not cover the end of long copy / CTAs */
+    body.is-pip-active main {
+      padding-bottom: max(8rem, calc(env(safe-area-inset-bottom) + 6rem));
+    }
+    @media (min-width: 640px) {
+      body.is-pip-active main {
+        padding-bottom: max(7rem, calc(env(safe-area-inset-bottom) + 5rem));
+      }
+    }
+  </style>
+</head>
+<body class="bg-white font-sans text-neutral-900 antialiased">
+  <!-- Video stage: placeholder keeps layout; shell animates from hero to PiP -->
+  <div id="video-stage" class="relative w-full">
+    <div
+      id="video-placeholder"
+      class="h-[50vh] min-h-[260px] w-full bg-neutral-950"
+      aria-hidden="true"
+    ></div>
+    <div id="pip-shell" role="region" aria-label="Featured film">
+      <video
+        id="pip-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        poster="heidi-in-bg.png"
+      >
+        <source src="original.mp4" type="video/mp4" />
+      </video>
+      <div
+        class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10"
+        aria-hidden="true"
+      ></div>
+      <button
+        type="button"
+        id="pip-close"
+        class="absolute right-1 top-1 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-black/35 text-white shadow-md backdrop-blur-md transition hover:bg-black/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:right-2 sm:top-2 sm:h-11 sm:w-11"
+        aria-label="Close floating video"
+      >
+        <span class="text-xl font-light leading-none" aria-hidden="true">×</span>
+      </button>
+    </div>
+  </div>
+
+  <header class="border-b border-neutral-100 px-5 py-10 sm:px-8 sm:py-14 md:px-12">
+    <p class="text-[10px] font-medium uppercase tracking-[0.35em] text-neutral-400">Aura St. Claire</p>
+    <h1 class="mt-4 max-w-2xl font-serif text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
+      Floating Mini-Player
+    </h1>
+    <p class="mt-4 max-w-xl text-sm leading-relaxed text-neutral-500 sm:text-base">
+      Scroll past the film — it eases into a glass picture-in-picture. Tap × to dismiss.
+    </p>
+  </header>
+
+  <main class="mx-auto max-w-3xl px-5 pb-24 pt-4 sm:px-8 md:px-12 md:pb-32">
+    <article class="prose prose-neutral max-w-none">
+      <h2 class="font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">Editorial</h2>
+      <p class="mt-8 text-[15px] leading-[1.9] text-neutral-600 sm:text-base">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
+      </p>
+      <p class="mt-6 text-[15px] leading-[1.9] text-neutral-600 sm:text-base">
+        Vestibulum id ligula porta felis euismod semper. Maecenas faucibus mollis interdum. Cras mattis consectetur purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Curabitur blandit tempus porttitor.
+      </p>
+      <p class="mt-6 text-[15px] leading-[1.9] text-neutral-600 sm:text-base">
+        Nullam quis risus eget urna mollis ornare vel eu leo. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+      </p>
+      <p class="mt-6 text-[15px] leading-[1.9] text-neutral-600 sm:text-base">
+        Sed posuere consectetur est at lobortis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Donec sed odio dui.
+      </p>
+      <p class="mt-6 text-[15px] leading-[1.9] text-neutral-600 sm:text-base">
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum aenean imperdiet etiam ultricies nisi vel augue curabitur ullamcorper.
+      </p>
+    </article>
+
+    <section class="mt-20 md:mt-28" aria-labelledby="pip-collection">
+      <h2 id="pip-collection" class="font-serif text-2xl font-semibold sm:text-3xl">
+        The Collection
+      </h2>
+      <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-2 lg:gap-10">
+        <article
+          class="group overflow-hidden rounded-2xl border border-neutral-900/10 bg-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+          style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+        >
+          <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+            <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+          </div>
+          <div class="p-6 sm:p-7">
+            <h3 class="font-serif text-xl font-semibold">Noir Silk</h3>
+            <p class="mt-2 text-sm leading-relaxed text-neutral-600">Evening drape with architectural shoulders.</p>
+            <a
+              href="#"
+              class="mt-5 inline-flex min-h-[48px] items-center border-b border-neutral-900/25 pb-0.5 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 sm:min-h-[52px]"
+            >
+              Shop the Look
+            </a>
+          </div>
+        </article>
+        <article
+          class="group overflow-hidden rounded-2xl border border-neutral-900/10 bg-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+          style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+        >
+          <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+            <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+          </div>
+          <div class="p-6 sm:p-7">
+            <h3 class="font-serif text-xl font-semibold">Lace Column</h3>
+            <p class="mt-2 text-sm leading-relaxed text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
+            <a
+              href="#"
+              class="mt-5 inline-flex min-h-[48px] items-center border-b border-neutral-900/25 pb-0.5 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 sm:min-h-[52px]"
+            >
+              Shop the Look
+            </a>
+          </div>
+        </article>
+        <article
+          class="group overflow-hidden rounded-2xl border border-neutral-900/10 bg-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+          style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+        >
+          <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+            <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+          </div>
+          <div class="p-6 sm:p-7">
+            <h3 class="font-serif text-xl font-semibold">Ivory Tailoring</h3>
+            <p class="mt-2 text-sm leading-relaxed text-neutral-600">Sharp lapels, softened by fluid wool.</p>
+            <a
+              href="#"
+              class="mt-5 inline-flex min-h-[48px] items-center border-b border-neutral-900/25 pb-0.5 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 sm:min-h-[52px]"
+            >
+              Shop the Look
+            </a>
+          </div>
+        </article>
+        <article
+          class="group overflow-hidden rounded-2xl border border-neutral-900/10 bg-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl"
+          style="-webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);"
+        >
+          <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+            <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+          </div>
+          <div class="p-6 sm:p-7">
+            <h3 class="font-serif text-xl font-semibold">Midnight Cape</h3>
+            <p class="mt-2 text-sm leading-relaxed text-neutral-600">Movement in matte satin, floor-skimming.</p>
+            <a
+              href="#"
+              class="mt-5 inline-flex min-h-[48px] items-center border-b border-neutral-900/25 pb-0.5 text-sm font-medium text-neutral-900 transition hover:border-neutral-900 sm:min-h-[52px]"
+            >
+              Shop the Look
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-neutral-100 px-5 py-12 text-center text-sm text-neutral-400">
+    Aura St. Claire — Floating PiP
+  </footer>
+
+  <script>
+    (function () {
+      var shell = document.getElementById('pip-shell');
+      var placeholder = document.getElementById('video-placeholder');
+      var closeBtn = document.getElementById('pip-close');
+      var video = document.getElementById('pip-video');
+      if (!shell || !placeholder) return;
+
+      var dismissed = false;
+      var pipActive = false;
+
+      function thresholdY() {
+        return Math.max(0, placeholder.offsetHeight - 24);
+      }
+
+      function onScroll() {
+        if (dismissed) return;
+        var y = window.scrollY || window.pageYOffset;
+        var next = y > thresholdY();
+        if (next !== pipActive) {
+          pipActive = next;
+          shell.classList.toggle('is-pip', pipActive);
+          document.body.classList.toggle('is-pip-active', pipActive);
+        }
+      }
+
+      function onClose() {
+        dismissed = true;
+        pipActive = false;
+        shell.classList.remove('is-pip');
+        document.body.classList.remove('is-pip-active');
+        shell.classList.add('is-hidden');
+        if (video) {
+          try {
+            video.pause();
+          } catch (e) {}
+        }
+      }
+
+      closeBtn.addEventListener('click', onClose);
+      closeBtn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClose();
+        }
+      });
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', function () {
+        if (!dismissed) onScroll();
+      });
+
+      onScroll();
+    })();
+  </script>
+</body>
+</html>
