@@ -1,9 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getStories } from '../lib/db';
+import { env } from 'cloudflare:workers';
 
 const { tenant } = Astro.locals;
-const db = Astro.locals.runtime.env.DB;
+const db = env.DB;
 
 const cat = Astro.url.searchParams.get('cat') ?? undefined;
 const stories = await getStories(db, tenant.id, cat);

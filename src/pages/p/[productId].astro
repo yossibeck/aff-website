@@ -1,8 +1,9 @@
 ---
 import { getStorySlugByProductId } from '../../lib/db';
+import { env } from 'cloudflare:workers';
 
 const { productId } = Astro.params;
-const db = Astro.locals.runtime.env.DB;
+const db = env.DB;
 const { tenant } = Astro.locals;
 
 if (!productId) return Astro.redirect('/archive', 302);

@@ -1,9 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getSiteConfigs, getStories } from '../lib/db';
+import { env } from 'cloudflare:workers';
 
 const { tenant } = Astro.locals;
-const db = Astro.locals.runtime.env.DB;
+const db = env.DB;
 
 const [configs, stories] = await Promise.all([
   getSiteConfigs(db, tenant.id),
