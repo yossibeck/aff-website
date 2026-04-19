@@ -24,6 +24,5 @@ CREATE TABLE IF NOT EXISTS story_products (
   product_id TEXT    NOT NULL,
   tenant_id  INTEGER NOT NULL,
   PRIMARY KEY (story_id, product_id),
-  FOREIGN KEY (story_id)   REFERENCES stories(id),
-  FOREIGN KEY (product_id) REFERENCES products(product_id)
+  FOREIGN KEY (story_id) REFERENCES stories(id)
 );
