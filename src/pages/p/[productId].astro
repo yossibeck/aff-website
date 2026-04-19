@@ -1,0 +1,18 @@
+---
+import { getStorySlugByProductId } from '../../lib/db';
+import { env } from 'cloudflare:workers';
+
+const { productId } = Astro.params;
+const db = env.DB;
+const { tenant } = Astro.locals;
+
+if (!productId) return Astro.redirect('/archive', 302);
+
+let slug: string | null = null;
+try {
+  slug = await getStorySlugByProductId(db, tenant.id, productId);
+} catch {
+  return Astro.redirect('/archive', 302);
+}
+return Astro.redirect(slug ? `/story/${slug}` : '/archive', 302);
+---

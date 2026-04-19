@@ -1,0 +1,200 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getStory } from '../../lib/db';
+import { env } from 'cloudflare:workers';
+
+const { tenant } = Astro.locals;
+const db = env.DB;
+
+const { slug } = Astro.params;
+const story = await getStory(db, tenant.id, slug!);
+
+if (!story) {
+  return Astro.redirect('/archive', 302);
+}
+---
+<Base title={`${tenant.name} — ${story.social_title}`}>
+  <style slot="head">
+    .connection-image-wrap {
+      box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.12), 0 12px 24px -8px rgb(0 0 0 / 0.08);
+    }
+    .js-hero-kicker { opacity: 0; }
+    .js-hero-kicker.active { opacity: 1; }
+    .js-hero-title {
+      opacity: 0;
+      transform: translateX(-2.75rem);
+    }
+    .js-hero-title.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .js-reveal-story {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 700ms ease-out, transform 700ms ease-out;
+    }
+    .js-reveal-story.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .js-reveal-card {
+      opacity: 0;
+      transform: translateY(60px) scale(0.95);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.06);
+      transition: opacity 700ms ease-out, transform 700ms ease-out, box-shadow 300ms ease-out;
+    }
+    .js-reveal-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .js-reveal-card.active:hover {
+      transform: translateY(-8px) scale(1);
+      box-shadow: 0 26px 50px -12px rgb(0 0 0 / 0.28), 0 14px 28px -14px rgb(0 0 0 / 0.18);
+    }
+  </style>
+
+  <!-- Social anchor: image + title -->
+  <section class="border-b border-neutral-200/90 bg-white" aria-labelledby="social-title-text">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 md:py-16 lg:px-10">
+      <div class="flex flex-col gap-10 md:flex-row md:items-center md:gap-14 lg:gap-20">
+        <div class="w-full shrink-0 md:w-1/2">
+          <div class="connection-image-wrap overflow-hidden rounded-sm bg-neutral-100">
+            <img
+              src={story.social_img}
+              alt=""
+              class="h-auto w-full object-cover"
+              width="900"
+              height="1200"
+              decoding="async"
+            />
+          </div>
+        </div>
+        <div class="w-full md:w-1/2 md:flex md:flex-col md:justify-center">
+          <p class="js-hero-kicker text-[10px] font-medium uppercase tracking-[0.35em] text-neutral-500">
+            {tenant.name}'s Curation
+          </p>
+          <h1
+            id="social-title-text"
+            class="js-hero-title mt-5 font-serif text-[1.65rem] font-normal leading-[1.2] text-neutral-900 sm:text-4xl md:text-[2.35rem] md:leading-[1.15] lg:text-[2.65rem]"
+          >
+            {story.social_title}
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="relative z-10 min-h-0">
+    <main class="mx-auto max-w-3xl space-y-16 px-5 pb-20 pt-12 sm:px-8 md:space-y-20 md:pb-28 md:pt-16 lg:px-10">
+
+      <!-- Editorial intro -->
+      <article class="js-reveal-story">
+        <p class="text-xs font-medium uppercase tracking-[0.35em] text-neutral-500">{tenant.name}</p>
+        <h2 class="mt-8 font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">Editorial Note</h2>
+        <p class="mt-6 text-base leading-[1.75] text-neutral-600 sm:text-lg">
+          {story.intro_text}
+        </p>
+      </article>
+
+      <!-- Product sections -->
+      <section class="js-reveal-collection" aria-labelledby="curated-heading">
+        <div class="text-center md:text-left">
+          <h2 id="curated-heading" class="js-reveal-collection-title font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">
+            The curated edit
+          </h2>
+        </div>
+
+        <div class="mt-14 space-y-20 md:mt-16 md:space-y-24">
+          {story.sections.map((section, i) => (
+            <article
+              class="js-reveal-card border-b border-neutral-200/80 pb-20 last:border-0 last:pb-0 md:pb-24"
+              data-bundle-index={i}
+            >
+              {section.product_title && (
+                <h3 class="font-serif text-xl font-semibold text-neutral-900 sm:text-2xl">
+                  {section.product_title}
+                </h3>
+              )}
+              <p class="mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]">
+                {section.story_text}
+              </p>
+              <div class="mt-12 overflow-hidden bg-neutral-50">
+                <img
+                  src={section.display_image}
+                  alt={section.product_title}
+                  class="h-auto w-full object-cover"
+                  width="900"
+                  height="1200"
+                  decoding="async"
+                />
+              </div>
+              <a
+                href={section.affiliate_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-10 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
+              >
+                Shop the Look
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function revealHero() {
+        var kicker = document.querySelector('.js-hero-kicker');
+        var title = document.querySelector('.js-hero-title');
+        if (reduced) {
+          if (kicker) kicker.classList.add('active');
+          if (title) title.classList.add('active');
+          return;
+        }
+        requestAnimationFrame(function () {
+          if (kicker) { kicker.style.transitionDelay = '0ms'; kicker.classList.add('active'); }
+          if (title) { title.style.transitionDelay = '500ms'; title.classList.add('active'); }
+        });
+      }
+
+      var story = document.querySelector('.js-reveal-story');
+      var collection = document.querySelector('.js-reveal-collection');
+      var collectionTitle = document.querySelector('.js-reveal-collection-title');
+      var cards = document.querySelectorAll('.js-reveal-card');
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var t = entry.target;
+          if (t === story) {
+            t.classList.add('active');
+            observer.unobserve(t);
+          } else if (t === collection) {
+            if (collectionTitle) collectionTitle.classList.add('active');
+            if (reduced) {
+              cards.forEach(function (c) { c.classList.add('active'); });
+            } else {
+              cards.forEach(function (card, i) {
+                window.setTimeout(function () { card.classList.add('active'); }, i * 150);
+              });
+            }
+            observer.unobserve(t);
+          }
+        });
+      }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+      if (story) observer.observe(story);
+      if (collection) observer.observe(collection);
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', revealHero);
+      } else {
+        revealHero();
+      }
+    })();
+  </script>
+</Base>

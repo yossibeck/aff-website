@@ -1,0 +1,130 @@
+---
+interface Props {
+  title?: string;
+  dark?: boolean;
+}
+const { title = 'Aura St. Claire', dark = false } = Astro.props;
+const { tenant } = Astro.locals;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .site-nav-glass {
+      background: rgba(255, 255, 255, 0.55);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+    }
+    .nav-dropdown-panel { display: none; }
+    .nav-dropdown-panel.is-open { display: block; }
+    .anchor-section { scroll-margin-top: 6rem; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .js-hero-kicker, .js-hero-title, .js-reveal-story,
+      .js-reveal-collection-title, .js-reveal-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      .hero-video-layer { transition: none !important; }
+    }
+  </style>
+  <slot name="head" />
+</head>
+<body class={dark ? 'min-h-[100dvh] font-sans text-neutral-900 antialiased' : 'bg-white font-sans text-neutral-900 antialiased'}>
+  {dark && (
+    <div class="pointer-events-none fixed inset-0 z-0 bg-neutral-950" aria-hidden="true">
+      <img
+        src="/heidi-in-bg.png"
+        alt=""
+        class="absolute inset-0 h-full w-full object-cover opacity-90"
+        width="1920"
+        height="1080"
+      />
+      <div class="absolute inset-0 bg-black/45"></div>
+    </div>
+  )}
+  <div class={dark ? 'relative z-10' : ''}>
+    <header class="site-nav-glass sticky top-0 z-50 w-full border-b border-black/5">
+      <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <a href="/" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
+        <nav class="flex items-center gap-1 text-sm font-medium text-neutral-800 sm:gap-3" aria-label="Primary">
+          <a href="/" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
+          <a href="/archive" class="rounded-full px-3 py-2 transition hover:bg-white/60">Archive</a>
+          <div class="relative" id="nav-categories-wrap">
+            <button
+              type="button"
+              id="nav-categories-btn"
+              class="flex items-center gap-1 rounded-full px-3 py-2 transition hover:bg-white/60"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="nav-categories-panel"
+            >
+              Categories
+              <span class="text-xs text-neutral-500" aria-hidden="true">▾</span>
+            </button>
+            <div
+              id="nav-categories-panel"
+              class="nav-dropdown-panel absolute right-0 mt-2 min-w-[11rem] rounded-xl border border-black/5 bg-white/95 py-2 shadow-lg backdrop-blur-md"
+              style="-webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);"
+              role="menu"
+              aria-hidden="true"
+            >
+              <a href="/archive?cat=wellness" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Wellness</a>
+              <a href="/archive?cat=street" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Street</a>
+              <a href="/archive?cat=beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class={`border-t py-10 text-center text-sm ${dark ? 'border-white/20 text-white/60' : 'border-neutral-200 text-neutral-500'}`}>
+      {tenant.name}
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var navBtn = document.getElementById('nav-categories-btn');
+      var navPanel = document.getElementById('nav-categories-panel');
+      function setNavOpen(open: boolean) {
+        if (!navPanel || !navBtn) return;
+        navPanel.classList.toggle('is-open', open);
+        navBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        navPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+      if (navBtn && navPanel) {
+        navBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          setNavOpen(!navPanel.classList.contains('is-open'));
+        });
+        document.addEventListener('click', function () { setNavOpen(false); });
+        navPanel.addEventListener('click', function (e) { e.stopPropagation(); });
+      }
+    })();
+  </script>
+</body>
+</html>
