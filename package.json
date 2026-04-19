@@ -1,0 +1,27 @@
+{
+  "name": "aff-website",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "generate-types": "wrangler types"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.1.10",
+    "astro": "^6.1.8",
+    "wrangler": "^4.83.0"
+  },
+  "overrides": {
+    "vite": "^7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260418.1",
+    "vitest": "^4.1.4"
+  }
+}
