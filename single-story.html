@@ -38,14 +38,8 @@
       display: block;
     }
 
-    #hero-image {
-      display: none;
-    }
-    #hero-image.is-active {
-      display: block;
-    }
-    #hero-video.is-hidden {
-      display: none;
+    .connection-image-wrap {
+      box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.12), 0 12px 24px -8px rgb(0 0 0 / 0.08);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -109,13 +103,13 @@
     }
   </style>
 </head>
-<body class="font-sans text-neutral-900 antialiased">
+<body class="bg-white font-sans text-neutral-900 antialiased">
   <!-- Global nav -->
   <header class="site-nav-glass sticky top-0 z-[60] w-full border-b border-black/5">
     <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-      <a href="home.html" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
+      <a href="index.html" class="font-serif text-lg font-semibold tracking-[0.2em] text-neutral-900 sm:text-xl">AURA</a>
       <nav class="flex items-center gap-1 text-sm font-medium text-neutral-800 sm:gap-3" aria-label="Primary">
-        <a href="home.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
+        <a href="index.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Home</a>
         <a href="archive.html" class="rounded-full px-3 py-2 transition hover:bg-white/60">Archive</a>
         <div class="relative" id="nav-categories-wrap">
           <button
@@ -136,213 +130,550 @@
             role="menu"
             aria-hidden="true"
           >
-            <a href="home.html#section-wellness" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Wellness</a>
-            <a href="home.html#section-street" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Street</a>
-            <a href="home.html#section-beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
+            <a href="index.html#section-wellness" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Wellness</a>
+            <a href="index.html#section-street" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Street</a>
+            <a href="index.html#section-beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
           </div>
         </div>
       </nav>
     </div>
   </header>
 
-  <!-- Fixed full-screen media -->
-  <div class="fixed inset-0 z-0 h-[100dvh] w-full overflow-hidden bg-neutral-950" aria-hidden="true">
-    <video
-      id="hero-video"
-      class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
-      style="width: auto; height: auto; min-width: 100%; min-height: 100%;"
-      autoplay
-      muted
-      loop
-      playsinline
-      poster="heidi-in-bg.png"
-    >
-      <source src="lace1.mp4" type="video/mp4" />
-    </video>
-    <img
-      id="hero-image"
-      src="heidi-in-bg.png"
-      alt=""
-      class="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
-      width="1920"
-      height="1080"
-    />
-    <!-- 40% dark overlay -->
-    <div class="absolute inset-0 bg-black/40"></div>
-  </div>
+  <!-- Hero Connection: social anchor + inspiration still -->
+  <section class="border-b border-neutral-200/90 bg-white" aria-labelledby="social-title-text">
+    <div class="mx-auto max-w-6xl px-5 py-12 sm:px-8 md:py-16 lg:px-10">
+      <div class="flex flex-col gap-10 md:flex-row md:items-center md:gap-14 lg:gap-20">
+        <div class="w-full shrink-0 md:w-1/2">
+          <div class="connection-image-wrap overflow-hidden rounded-sm bg-neutral-100">
+            <img
+              id="connection-image"
+              src="heidi-in-bg.png"
+              alt=""
+              class="h-auto w-full object-cover"
+              width="900"
+              height="1200"
+              decoding="async"
+            />
+          </div>
+        </div>
+        <div class="w-full md:w-1/2 md:flex md:flex-col md:justify-center">
+          <p class="text-[10px] font-medium uppercase tracking-[0.35em] text-neutral-500">AURA'S CURATION</p>
+          <h1
+            id="social-title-text"
+            class="js-hero-title mt-5 font-serif text-[1.65rem] font-normal leading-[1.2] text-neutral-900 sm:text-4xl md:text-[2.35rem] md:leading-[1.15] lg:text-[2.65rem]"
+          >
+            The Immersive Vibe
+          </h1>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- Scrolling content over video -->
-  <div class="relative z-10 min-h-[100dvh]">
-    <header class="px-5 pb-8 pt-12 text-center sm:px-8 sm:pt-16 md:px-12">
-      <p
-        id="hero-kicker-text"
-        class="js-hero-kicker text-xs font-medium uppercase tracking-[0.35em] text-white/90 transition-all duration-700 ease-out"
-      >
-        Aura St. Claire
-      </p>
-      <h1
-        id="hero-title-text"
-        class="js-hero-title mt-4 font-serif text-4xl font-semibold leading-tight text-white drop-shadow-sm transition-all duration-700 ease-out sm:text-5xl md:text-6xl"
-      >
-        The Immersive Vibe
-      </h1>
-    </header>
-
-    <main class="mx-auto max-w-3xl space-y-8 px-5 pb-16 sm:px-8 md:space-y-10 md:pb-24 lg:px-10">
-      <!-- Glass story card -->
-      <article
-        class="js-reveal-story rounded-2xl border border-white/40 bg-white/75 p-6 shadow-xl backdrop-blur-md sm:p-8 md:p-10"
-        style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-      >
-        <h2 class="font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">Editorial Note</h2>
-        <p class="mt-5 text-base leading-relaxed text-neutral-700 sm:text-lg">
+  <div class="relative z-10 min-h-0">
+    <main class="mx-auto max-w-3xl space-y-16 px-5 pb-20 pt-12 sm:px-8 md:space-y-20 md:pb-28 md:pt-16 lg:px-10">
+      <article class="js-reveal-story">
+        <p
+          id="story-kicker-display"
+          class="js-hero-kicker text-xs font-medium uppercase tracking-[0.35em] text-neutral-500"
+        >
+          Aura St. Claire
+        </p>
+        <p id="story-inline-title" class="mt-3 font-serif text-xl text-neutral-800 sm:text-2xl"></p>
+        <h2 class="mt-8 font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">Editorial Note</h2>
+        <p class="mt-6 text-base leading-[1.75] text-neutral-600 sm:text-lg">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
         </p>
-        <p class="mt-4 text-base leading-relaxed text-neutral-700 sm:text-lg">
+        <p class="mt-4 text-base leading-[1.75] text-neutral-600 sm:text-lg">
           Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, ut sagittis magna cursus in.
         </p>
       </article>
 
-      <!-- Glass products -->
-      <section class="js-reveal-collection" aria-labelledby="immersive-collection">
-        <h2
-          id="immersive-collection"
-          class="js-reveal-collection-title mb-8 rounded-2xl border border-white/40 bg-white/60 px-6 py-4 text-center font-serif text-2xl font-semibold text-neutral-900 shadow-lg backdrop-blur-md sm:mb-10 sm:text-3xl"
-          style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-        >
-          The Collection
-        </h2>
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6 lg:gap-8">
-          <a
-            href="single-story.html?s=duck"
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98] sm:min-h-0"
-            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-          >
-            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
-              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-            </div>
-            <div class="flex flex-1 flex-col p-5 sm:p-6">
-              <h3 class="font-serif text-xl font-semibold text-neutral-900">Noir Silk</h3>
-              <p class="mt-2 flex-1 text-sm text-neutral-600">Evening drape with architectural shoulders.</p>
-              <span
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
-              >
-                Shop the Look
-              </span>
-            </div>
-          </a>
+      <section class="js-reveal-collection" aria-labelledby="curated-heading">
+        <div class="text-center md:text-left">
+          <h2 id="curated-heading" class="js-reveal-collection-title font-serif text-2xl font-semibold text-neutral-900 sm:text-3xl">
+            The curated edit
+          </h2>
+          <p class="mt-3 max-w-xl text-sm leading-relaxed text-neutral-500 md:mx-0 mx-auto">
+            Four pieces selected to work as one quiet-luxury story—layered proportions, texture, and light.
+          </p>
+        </div>
 
-          <a
-            href="single-story.html?s=lace"
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
-            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-          >
-            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
-              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+        <div id="bundle-root" class="mt-14 space-y-20 md:mt-16 md:space-y-24">
+          <article class="js-reveal-card js-bundle-block border-b border-neutral-200/80 pb-20 last:border-0 last:pb-0 md:pb-24" data-bundle-index="0">
+            <h3 class="bundle-product font-serif text-xl font-semibold text-neutral-900 sm:text-2xl"></h3>
+            <p class="bundle-fit mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]"></p>
+            <p class="bundle-note mt-6 font-serif text-sm italic leading-relaxed text-neutral-500 sm:text-base"></p>
+            <div class="bundle-image-wrap mt-12 overflow-hidden bg-neutral-50">
+              <img class="bundle-img h-auto w-full object-cover" src="" alt="" width="900" height="1200" />
             </div>
-            <div class="flex flex-1 flex-col p-5 sm:p-6">
-              <h3 class="font-serif text-xl font-semibold text-neutral-900">Lace Column</h3>
-              <p class="mt-2 flex-1 text-sm text-neutral-600">Sheer paneling over a sculpted silhouette.</p>
-              <span
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
-              >
-                Shop the Look
-              </span>
+            <a
+              class="bundle-cta mt-10 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
+              href="#"
+            ></a>
+          </article>
+          <article class="js-reveal-card js-bundle-block border-b border-neutral-200/80 pb-20 last:border-0 last:pb-0 md:pb-24" data-bundle-index="1">
+            <h3 class="bundle-product font-serif text-xl font-semibold text-neutral-900 sm:text-2xl"></h3>
+            <p class="bundle-fit mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]"></p>
+            <p class="bundle-note mt-6 font-serif text-sm italic leading-relaxed text-neutral-500 sm:text-base"></p>
+            <div class="bundle-image-wrap mt-12 overflow-hidden bg-neutral-50">
+              <img class="bundle-img h-auto w-full object-cover" src="" alt="" width="900" height="1200" />
             </div>
-          </a>
-
-          <a
-            href="single-story.html?s=o"
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
-            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-          >
-            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
-              <img src="heidi-in-bg.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
+            <a
+              class="bundle-cta mt-10 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
+              href="#"
+            ></a>
+          </article>
+          <article class="js-reveal-card js-bundle-block border-b border-neutral-200/80 pb-20 last:border-0 last:pb-0 md:pb-24" data-bundle-index="2">
+            <h3 class="bundle-product font-serif text-xl font-semibold text-neutral-900 sm:text-2xl"></h3>
+            <p class="bundle-fit mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]"></p>
+            <p class="bundle-note mt-6 font-serif text-sm italic leading-relaxed text-neutral-500 sm:text-base"></p>
+            <div class="bundle-image-wrap mt-12 overflow-hidden bg-neutral-50">
+              <img class="bundle-img h-auto w-full object-cover" src="" alt="" width="900" height="1200" />
             </div>
-            <div class="flex flex-1 flex-col p-5 sm:p-6">
-              <h3 class="font-serif text-xl font-semibold text-neutral-900">Ivory Tailoring</h3>
-              <p class="mt-2 flex-1 text-sm text-neutral-600">Sharp lapels, softened by fluid wool.</p>
-              <span
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
-              >
-                Shop the Look
-              </span>
+            <a
+              class="bundle-cta mt-10 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
+              href="#"
+            ></a>
+          </article>
+          <article class="js-reveal-card js-bundle-block" data-bundle-index="3">
+            <h3 class="bundle-product font-serif text-xl font-semibold text-neutral-900 sm:text-2xl"></h3>
+            <p class="bundle-fit mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]"></p>
+            <p class="bundle-note mt-6 font-serif text-sm italic leading-relaxed text-neutral-500 sm:text-base"></p>
+            <div class="bundle-image-wrap mt-12 overflow-hidden bg-neutral-50">
+              <img class="bundle-img h-auto w-full object-cover" src="" alt="" width="900" height="1200" />
             </div>
-          </a>
-
-          <a
-            href="single-story.html?s=lace-beauty"
-            class="js-reveal-card group flex flex-col overflow-hidden rounded-2xl border border-white/40 bg-white/70 text-neutral-900 no-underline outline-none backdrop-blur-md transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900/40 active:scale-[0.98]"
-            style="backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);"
-          >
-            <div class="aspect-[3/4] overflow-hidden bg-neutral-200/50">
-              <img src="1st-duck.png" alt="" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" width="600" height="800" />
-            </div>
-            <div class="flex flex-1 flex-col p-5 sm:p-6">
-              <h3 class="font-serif text-xl font-semibold text-neutral-900">Midnight Cape</h3>
-              <p class="mt-2 flex-1 text-sm text-neutral-600">Movement in matte satin, floor-skimming.</p>
-              <span
-                class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-transparent px-5 py-3 text-center text-sm font-medium tracking-[0.12em] text-neutral-900 transition-all duration-300 group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white group-hover:tracking-[0.2em] group-hover:shadow-lg sm:min-h-[52px]"
-              >
-                Shop the Look
-              </span>
-            </div>
-          </a>
+            <a
+              class="bundle-cta mt-10 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
+              href="#"
+            ></a>
+          </article>
         </div>
       </section>
     </main>
 
-    <footer class="relative z-10 px-5 pb-12 text-center text-sm text-white/80 sm:px-8">
-      Aura St. Claire — Focus concept: Immersive Vibe
+    <footer class="border-t border-neutral-200 bg-white px-5 py-12 text-center text-sm text-neutral-500 sm:px-8">
+      Aura St. Claire — Single story · Aura's curated bundle
     </footer>
   </div>
 
   <script>
     (function () {
+      function item(t, f, n, i, h, c) {
+        return {
+          productTitle: t,
+          fit: f,
+          note: n,
+          image: i,
+          href: h,
+          cta: c,
+        };
+      }
+
       var STORIES = {
-        duck: { kicker: 'Wellness', title: 'Noir Silk', mode: 'image', image: '1st-duck.png' },
-        lace: { kicker: 'Wellness', title: 'Lace Drift', mode: 'video', src: 'lace1.mp4', poster: 'heidi-in-bg.png' },
-        heidi: { kicker: 'Beauty', title: 'Glass Light', mode: 'image', image: 'heidi-in-bg.png' },
-        o: { kicker: 'Street', title: 'City Pulse', mode: 'video', src: 'o.mp4', poster: '1st-duck.png' },
-        'heidi-alt': { kicker: 'Street', title: 'Sidewalk Silhouette', mode: 'image', image: 'heidi-in-bg.png' },
-        'duck-street': { kicker: 'Street', title: 'Square Study', mode: 'image', image: '1st-duck.png' },
-        'lace-beauty': { kicker: 'Beauty', title: 'Veil Motion', mode: 'video', src: 'lace1.mp4', poster: 'heidi-in-bg.png' },
-        'o-beauty': { kicker: 'Beauty', title: 'Afterglow', mode: 'video', src: 'o.mp4', poster: 'heidi-in-bg.png' },
-        'duck-wellness': { kicker: 'Wellness', title: 'Quiet Form', mode: 'image', image: '1st-duck.png' },
+        duck: {
+          kicker: 'Wellness',
+          title: 'Noir Silk',
+          socialTitle: 'Noir silk mornings — slow ritual, soft shoulders, the wellness edit you saved on Pinterest.',
+          connectionImage: '1st-duck.png',
+          bundle: [
+            item(
+              'Noir Silk',
+              'A fluid drape anchors the story: it carries shadow and light so the rest of the stack feels intentional, not loud.',
+              'I love how this reads from across the room—pair it with bare sandals and keep jewelry whispers-only.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Lace Column',
+              'Sheer structure adds breath; it keeps the silhouette editorial while the silk stays grounded.',
+              'I layer this when I want romance without fuss—the column does the shaping for you.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Quiet Form Knit',
+              'Matte texture balances shine so the look stays wellness-coded, not evening-coded.',
+              'Aura\'s note — tuck the hem once for a subtle sculpt; it photographs like a dream.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Silk Scarf',
+              'The narrow finish ties the palette together and moves when you walk—effortless punctuation.',
+              'I love layering this with the silk scarf for that effortless look.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        lace: {
+          kicker: 'Wellness',
+          title: 'Lace Drift',
+          socialTitle: 'Lace drift in morning light — the soft column TikTok couldn\'t scroll past.',
+          connectionImage: 'heidi-in-bg.png',
+          bundle: [
+            item(
+              'Lace Column',
+              'Vertical sheer keeps the frame elongated; it is the hero piece the rest orbit around.',
+              'Film this near a window—the lace catches light in the most forgiving way.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Noir Silk',
+              'Deep tone underneath steadies the sheen so the lace never feels costume.',
+              'I offset sheen with matte skin and a slick bun; quiet contrast wins.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Ivory Tailoring',
+              'A sharp shoulder throws the lace into relief; tailored balance meets fluid romance.',
+              'Half-tuck the jacket for movement; it reads modern, not corporate.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Veil Stole',
+              'A whisper-weight layer that repeats the lace motif without repeating texture.',
+              'Aura\'s note — drape once over the shoulder for editorial stills.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        heidi: {
+          kicker: 'Beauty',
+          title: 'Glass Light',
+          socialTitle: 'Glass light on skin — the beauty story your feed keeps coming back to.',
+          connectionImage: 'heidi-in-bg.png',
+          bundle: [
+            item(
+              'Glass Light Gown',
+              'Cool undertones and a soft sheen mimic daylight on glass—perfect for portrait-first beauty.',
+              'Shoot at golden hour; the fabric eats harsh flash for breakfast.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Midnight Cape',
+              'Adds depth behind the face without stealing focus from makeup.',
+              'I sweep it off one shoulder for asymmetry that still feels classic.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Lace Column',
+              'Texture echo for close-ups—lace reads as detail, not noise, on camera.',
+              'Keep earrings minimal; let the neckline do the talking.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Afterglow Slip',
+              'Warm neutral that bridges cheek and collarbone tones for cohesive beauty framing.',
+              'Aura\'s note — a single high point on the cupid\'s bow, mirrored in fabric.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        o: {
+          kicker: 'Street',
+          title: 'City Pulse',
+          socialTitle: 'City pulse, long lines — street energy with quiet-luxury restraint.',
+          connectionImage: '1st-duck.png',
+          bundle: [
+            item(
+              'City Pulse Coat',
+              'Structure and stride: the coat sets the rhythm; everything else follows its beat.',
+              'I size up once for that borrowed silhouette Pinterest loves.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Sidewalk Denim',
+              'Matte indigo calms shine from leather and hardware—street without shout.',
+              'Cuff deep once; show ankle and a slim shoe.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Ivory Tailoring',
+              'Crisp break at the hem keeps the look city-tailored, not lounge.',
+              'Aura\'s note — push sleeves for gesture; it reads confident on video.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Square Study Bag',
+              'Graphic geometry finishes the silhouette with a clean punctuation mark.',
+              'Carry crossbody for motion shots; the square frame stays legible.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        'heidi-alt': {
+          kicker: 'Street',
+          title: 'Sidewalk Silhouette',
+          socialTitle: 'Sidewalk silhouette — long shadow, longer coat, saved for later.',
+          connectionImage: 'heidi-in-bg.png',
+          bundle: [
+            item(
+              'Sidewalk Trench',
+              'Length creates line; the silhouette reads in one glance on a busy pavement.',
+              'Belt it loose—movement matters more than cinch.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Noir Silk',
+              'Low-luster base layer so outer pieces can take contrast.',
+              'I love this under wool when the weather can\'t decide.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Square Study',
+              'Crop proportion balances the long coat—street math, solved.',
+              'Tuck once; let the hem float.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Glass Light Scarf',
+              'Soft translucency at the neck keeps the face bright in overcast light.',
+              'Aura\'s note — tie low; show collarbone for vertical flow.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        'duck-street': {
+          kicker: 'Street',
+          title: 'Square Study',
+          socialTitle: 'Square study — graphic crop, confident stride, street stills.',
+          connectionImage: '1st-duck.png',
+          bundle: [
+            item(
+              'Square Study Top',
+              'Graphic crop reframes proportions; it pairs with volume below without bulk.',
+              'Keep neck clean—let the square neckline be the geometry.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'City Pulse Pant',
+              'Straight leg balances the crop; rhythm stays uninterrupted.',
+              'I cuff once for sneakers; leave long for boots.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Ivory Blazer',
+              'Soft tailoring adds authority without stiffness—quiet street polish.',
+              'Push the sleeve; show watch or bracelet.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Noir Silk Bandeau',
+              'Minimal base layer so outer pieces can move independently.',
+              'Aura\'s note — monochrome layers read expensive on camera.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        'lace-beauty': {
+          kicker: 'Beauty',
+          title: 'Veil Motion',
+          socialTitle: 'Veil motion — satin that follows you, the beauty clip everyone replays.',
+          connectionImage: 'heidi-in-bg.png',
+          bundle: [
+            item(
+              'Veil Motion Dress',
+              'Movement-first satin catches micro-expressions in fabric—ideal for slow beauty pans.',
+              'Walk on the turn; the hem does half the storytelling.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Glass Light',
+              'Cool sheen harmonizes with skin highlights for cohesive glow.',
+              'Keep shoulders bare; let the line stay uninterrupted.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Midnight Cape',
+              'Adds contrast so cheekbone highlight pops on darker surround.',
+              'I drape off-camera left for asymmetry that still feels soft.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Rose Oil Sheen',
+              'Warm finishing layer that mirrors fabric glow—beauty-to-wardrobe bridge.',
+              'Aura\'s note — tap high, not swipe; texture stays glassy.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        'o-beauty': {
+          kicker: 'Beauty',
+          title: 'Afterglow',
+          socialTitle: 'Afterglow — warm light on shoulders, the Pinterest caption writes itself.',
+          connectionImage: 'heidi-in-bg.png',
+          bundle: [
+            item(
+              'Afterglow Slip',
+              'Warm neutral that flatters candlelight and golden-hour windows alike.',
+              'Shoot with indirect light; the slip rewards softness.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Lace Column',
+              'Texture contrast against satin—detail without clutter in frame.',
+              'Step slightly sideways; lace reads dimensional.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Noir Silk Robe',
+              'Layered depth for transitional shots—robe on, robe off, same palette.',
+              'Belt loose; keep the line languid.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Glass Light Earrings',
+              'Small reflective hit that mirrors collarbone highlight.',
+              'Aura\'s note — one statement only; let skin stay the headline.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
+        'duck-wellness': {
+          kicker: 'Wellness',
+          title: 'Quiet Form',
+          socialTitle: 'Quiet form — balanced proportions for slow mornings and softer feeds.',
+          connectionImage: '1st-duck.png',
+          bundle: [
+            item(
+              'Quiet Form Set',
+              'Balanced proportions calm the eye; wellness reads as ease, not effort.',
+              'I start here when the week needs less noise.',
+              '1st-duck.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Noir Silk',
+              'Breathable drape for transitions from mat to espresso without a wardrobe change.',
+              'Half-tie the belt; keep the gesture relaxed.',
+              '1st-duck.png',
+              '#',
+              'SHOP NOW'
+            ),
+            item(
+              'Lace Column',
+              'Soft vertical for days you want structure without constraint.',
+              'Layer a thin knit when the studio is cool.',
+              'heidi-in-bg.png',
+              '#',
+              'GET THE LOOK'
+            ),
+            item(
+              'Silk Eye Mask',
+              'Micro-luxury finish—sleep, travel, still life; the story stays cohesive.',
+              'Aura\'s note — match mask to slip for tonal calm.',
+              'heidi-in-bg.png',
+              '#',
+              'SHOP NOW'
+            ),
+          ],
+        },
       };
 
       function applyStoryFromQuery() {
         var params = new URLSearchParams(window.location.search);
         var key = (params.get('s') || '').toLowerCase();
-        var story = STORIES[key];
-        var video = document.getElementById('hero-video');
-        var image = document.getElementById('hero-image');
-        var kickerEl = document.getElementById('hero-kicker-text');
-        var titleEl = document.getElementById('hero-title-text');
-        if (!story || !video || !image) return;
+        var story = STORIES[key] || STORIES.duck;
 
+        var conn = document.getElementById('connection-image');
+        var socialEl = document.getElementById('social-title-text');
+        var kickerEl = document.getElementById('story-kicker-display');
+        var inlineTitle = document.getElementById('story-inline-title');
+        if (conn) {
+          conn.src = story.connectionImage;
+          conn.alt = '';
+        }
+        if (socialEl) socialEl.textContent = story.socialTitle;
         if (kickerEl) kickerEl.textContent = story.kicker;
-        if (titleEl) titleEl.textContent = story.title;
+        if (inlineTitle) inlineTitle.textContent = story.title;
         document.title = 'Aura St. Claire — ' + story.title;
 
-        if (story.mode === 'image') {
-          video.classList.add('is-hidden');
-          image.classList.add('is-active');
-          image.removeAttribute('hidden');
-          image.src = story.image;
-          image.alt = '';
-          try {
-            video.pause();
-          } catch (e) {}
-        } else {
-          image.classList.remove('is-active');
-          video.classList.remove('is-hidden');
-          var source = video.querySelector('source');
-          if (source) source.setAttribute('src', story.src);
-          video.setAttribute('poster', story.poster || 'heidi-in-bg.png');
-          video.load();
-          video.play().catch(function () {});
-        }
+        var blocks = document.querySelectorAll('.js-bundle-block');
+        story.bundle.forEach(function (row, i) {
+          var block = blocks[i];
+          if (!block) return;
+          var prod = block.querySelector('.bundle-product');
+          var fit = block.querySelector('.bundle-fit');
+          var note = block.querySelector('.bundle-note');
+          var img = block.querySelector('.bundle-img');
+          var cta = block.querySelector('.bundle-cta');
+          if (prod) prod.textContent = row.productTitle;
+          if (fit) fit.textContent = row.fit;
+          if (note) {
+            var prefix = 'Aura\'s note — ';
+            note.textContent = row.note.indexOf('Aura\'s note') === 0 ? row.note : prefix + row.note;
+          }
+          if (img) {
+            img.src = row.image;
+            img.alt = row.productTitle;
+          }
+          if (cta) {
+            cta.textContent = row.cta;
+            cta.href = row.href;
+          }
+        });
       }
 
       applyStoryFromQuery();
