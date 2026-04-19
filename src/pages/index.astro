@@ -240,6 +240,7 @@ const categoryTextColors: Record<string, string> = {
       var pills = document.querySelectorAll('.story-pill[data-hero-cat]');
 
       if (!v0 || !v1 || !fullLink || !discoverBtn || !titleEl) return;
+      if (CATEGORY_ORDER.length === 0) return;
 
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var fadeMs = reduced ? 0 : 1000;

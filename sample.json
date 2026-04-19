@@ -1,0 +1,58 @@
+{
+  "tenants": [
+    {
+      "id": 1,
+      "slug": "aura",
+      "name": "Aura St. Claire",
+      "domain": "lp.aurastclaire.com"
+    }
+  ],
+  "tenant_domains": [
+    {
+      "domain": "lp.aurastclaire.com",
+      "tenant_id": 1
+    }
+  ],
+  "products": [
+    {
+      "product_id": "ali_12345",
+      "alias": "silk-slip-dress",
+      "title": "Minimalist Silk Slip Dress",
+      "affiliate_url": "https://s.click.aliexpress.com/e/_xxx",
+      "selected_image_url": "https://ae01.alicdn.com/kf/img_source.jpg",
+      "price": "$29.99",
+      "tenant_id": 1
+    }
+  ],
+  "stories": [
+    {
+      "id": 101,
+      "tenant_id": 1,
+      "slug": "morning-glow-routine",
+      "category": "wellness",
+      "social_title": "The 5 AM Glow-Up Routine",
+      "social_img": "/images/social-inspiration.jpg",
+      "intro_text": "True beauty starts with a calm morning. Here is how I set my intention for the day with these essentials.",
+      "sections_json": [
+        {
+          "product_id": "ali_12345",
+          "story_text": "I start with this silk dress. It feels like a second skin and makes me feel elegant even before my first coffee.",
+          "display_image": "https://ae01.alicdn.com/kf/product_beauty_shot.jpg"
+        },
+        {
+          "product_id": "ali_67890",
+          "story_text": "Next is the facial roller. 5 minutes is all you need to de-puff and wake up your skin.",
+          "display_image": "https://ae01.alicdn.com/kf/roller_action_shot.jpg"
+        }
+      ]
+    }
+  ],
+  "site_config": [
+    {
+      "tenant_id": 1,
+      "category": "wellness",
+      "hero_video_url": "pullover.mp4",
+      "hero_title": "The Wellness Issue"
+    }
+  ]
+}
