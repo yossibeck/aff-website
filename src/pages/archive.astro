@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import { getStories } from '../lib/db';
+
+const { tenant } = Astro.locals;
+const db = Astro.locals.runtime.env.DB;
+
+const cat = Astro.url.searchParams.get('cat') ?? undefined;
+const stories = await getStories(db, tenant.id, cat);
+
+const activeFilter = cat ?? 'all';
+const filterLabels = ['all', 'wellness', 'street', 'beauty'];
+---
+<Base title={`${tenant.name} — Archive`} dark={true}>
+  <style slot="head">
+    .archive-tile:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.95);
+      outline-offset: 2px;
+    }
+    .gallery-item__overlay {
+      display: none;
+    }
+    @media (min-width: 1024px) and (hover: hover) {
+      .gallery-item__overlay {
+        display: flex;
+        opacity: 0;
+        transition: opacity 0.15s ease-out;
+      }
+      .archive-tile:hover .gallery-item__overlay,
+      .archive-tile:focus-visible .gallery-item__overlay {
+        opacity: 1;
+      }
+    }
+    .filter-pill.is-active {
+      background-color: rgb(23 23 23);
+      color: white;
+      border-color: rgb(23 23 23);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .gallery-item__overlay { transition: none; }
+    }
+  </style>
+
+  <main class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-28 lg:pt-14">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="text-xs font-medium uppercase tracking-[0.35em] text-white/85">{tenant.name}</p>
+      <h1 class="mt-3 font-serif text-4xl font-semibold text-white drop-shadow-sm sm:text-5xl">Archive</h1>
+      <p class="mt-4 text-sm leading-relaxed text-white/85 sm:text-base">
+        A quiet editorial wall — imagery, mood, and story in one place.
+      </p>
+    </div>
+
+    <!-- Category filter pills -->
+    <div
+      class="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/40 bg-white/60 p-3 shadow-lg backdrop-blur-md sm:mt-12"
+      style="-webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);"
+      role="toolbar"
+      aria-label="Filter by category"
+    >
+      {filterLabels.map((label) => (
+        <a
+          href={label === 'all' ? '/archive' : `/archive?cat=${label}`}
+          class={`filter-pill rounded-full border border-neutral-900/10 bg-white/80 px-4 py-2 text-xs font-medium uppercase tracking-wide text-neutral-800 transition hover:border-neutral-900/30 sm:text-sm no-underline${activeFilter === label ? ' is-active' : ''}`}
+          aria-current={activeFilter === label ? 'page' : undefined}
+        >
+          {label.charAt(0).toUpperCase() + label.slice(1)}
+        </a>
+      ))}
+    </div>
+
+    <!-- Story grid: 2 cols mobile, 5 cols desktop, 9:16 tiles -->
+    {stories.length === 0 ? (
+      <p class="mt-16 text-center text-white/60">No stories yet in this category.</p>
+    ) : (
+      <div class="mx-auto mt-10 grid max-w-7xl grid-cols-2 gap-2 lg:mt-12 lg:grid-cols-5" id="archive-grid">
+        {stories.map((story) => (
+          <div class="archive-grid__item min-w-0">
+            <a
+              href={`/story/${story.slug}`}
+              class="archive-tile relative block overflow-hidden rounded-sm bg-neutral-900 no-underline"
+              data-category={story.category}
+              aria-label={`${story.social_title} — open story`}
+            >
+              <div class="relative aspect-[9/16] w-full">
+                <img
+                  src={story.social_img}
+                  alt=""
+                  class="h-full w-full object-cover"
+                  width="600"
+                  height="1067"
+                  decoding="async"
+                />
+                <div class="gallery-item__overlay pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black/65 via-black/20 to-transparent px-2 pb-2 pt-12">
+                  <span class="font-serif text-xs font-semibold leading-tight text-white sm:text-sm">
+                    {story.social_title}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+    )}
+  </main>
+</Base>
