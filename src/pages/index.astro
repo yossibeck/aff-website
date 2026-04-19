@@ -1,17 +1,399 @@
 ---
+import Base from '../layouts/Base.astro';
+import { getSiteConfigs, getStories } from '../lib/db';
 
+const { tenant } = Astro.locals;
+const db = Astro.locals.runtime.env.DB;
+
+const [configs, stories] = await Promise.all([
+  getSiteConfigs(db, tenant.id),
+  getStories(db, tenant.id),
+]);
+
+// Build the data objects the crossfade JS expects
+const heroCategories: Record<string, { title: string; video: string; link: string }> = {};
+const categoryOrder: string[] = [];
+for (const cfg of configs) {
+  heroCategories[cfg.category] = {
+    title: cfg.hero_title,
+    video: cfg.hero_video_url,
+    link: `/archive?cat=${cfg.category}`,
+  };
+  categoryOrder.push(cfg.category);
+}
+
+const firstCategory = categoryOrder[0] ?? 'wellness';
+const firstConfig = heroCategories[firstCategory];
+
+// Group stories by category for section previews
+const storiesByCategory: Record<string, typeof stories> = {};
+for (const story of stories) {
+  if (!storiesByCategory[story.category]) storiesByCategory[story.category] = [];
+  storiesByCategory[story.category].push(story);
+}
+
+const categoryGradients: Record<string, string> = {
+  wellness: 'from-emerald-50 to-white',
+  street:   'from-amber-50 to-white',
+  beauty:   'from-rose-50 to-white',
+};
+const categoryTextColors: Record<string, string> = {
+  wellness: 'text-emerald-900',
+  street:   'text-amber-950',
+  beauty:   'text-rose-950',
+};
 ---
+<Base title={`${tenant.name} — ${firstConfig?.title ?? ''}`}>
+  <style slot="head">
+    .js-hero-kicker { opacity: 0; }
+    .js-hero-kicker.active { opacity: 1; transition: opacity 1000ms ease-out; }
+    .js-hero-title {
+      opacity: 0;
+      transform: translateX(-2.75rem);
+    }
+    .js-hero-title.active {
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 1000ms ease-out, transform 1000ms ease-out;
+    }
+    .hero-video-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-video-layer.is-visible { opacity: 1; z-index: 2; }
+    .hero-video-layer.is-on-top { z-index: 3; }
+    .js-reveal-story, .js-reveal-collection-title {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 1000ms ease-out, transform 1000ms ease-out;
+    }
+    .js-reveal-story.active, .js-reveal-collection-title.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .js-reveal-card {
+      opacity: 0;
+      transform: translateY(60px) scale(0.95);
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      transition: opacity 1000ms ease-out, transform 1000ms ease-out, box-shadow 300ms ease-out;
+    }
+    .js-reveal-card.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .js-reveal-card.active:hover {
+      transform: translateY(-8px) scale(1);
+      box-shadow: 0 22px 44px -14px rgb(0 0 0 / 0.2), 0 12px 24px -10px rgb(0 0 0 / 0.12);
+    }
+  </style>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+  <!-- Full-bleed hero -->
+  <section
+    class="relative min-h-[calc(100dvh-4rem)] w-full overflow-hidden bg-neutral-950"
+    aria-label="Featured category"
+  >
+    <div class="absolute inset-0 z-0">
+      <video
+        id="hero-video-0"
+        class="hero-video-layer is-visible is-on-top"
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+      >
+        <source src={firstConfig?.video ?? ''} type="video/mp4" />
+      </video>
+      <video id="hero-video-1" class="hero-video-layer" muted playsinline preload="metadata"></video>
+    </div>
+    <a
+      id="hero-full-link"
+      href={firstConfig?.link ?? '/archive'}
+      class="absolute inset-0 z-[1]"
+      aria-label={`Discover ${firstConfig?.title ?? ''} — view the archive`}
+    ></a>
+    <div
+      class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-black/60 via-black/10 to-black/30"
+      aria-hidden="true"
+    ></div>
+    <div class="pointer-events-none relative z-10 flex min-h-[calc(100dvh-4rem)] w-full flex-col justify-end px-5 pb-12 pt-24 sm:px-10 sm:pb-16 md:px-14 lg:justify-center lg:px-16 lg:pb-20 xl:px-20">
+      <p class="js-hero-kicker mb-3 text-xs font-medium uppercase tracking-[0.35em] text-white/85">
+        {tenant.name}
+      </p>
+      <h1 class="js-hero-title max-w-4xl font-serif text-4xl font-semibold leading-[1.08] text-white sm:text-5xl md:text-6xl lg:text-7xl">
+        {firstConfig?.title ?? ''}
+      </h1>
+      <a
+        id="hero-discover-btn"
+        href={firstConfig?.link ?? '/archive'}
+        class="hero-discover-btn pointer-events-auto mt-10 inline-flex w-full max-w-md items-center justify-center border-2 border-white bg-white/10 px-10 py-4 text-center font-serif text-base font-normal uppercase tracking-[0.2em] text-white shadow-[0_16px_48px_rgba(0,0,0,0.45)] backdrop-blur-[6px] transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 sm:mt-12 sm:text-lg md:text-xl"
+      >
+        CLICK TO DISCOVER
+      </a>
+    </div>
+  </section>
+
+  <div class="w-full">
+    <!-- Story category pills -->
+    <section
+      class="border-b border-neutral-200/80 bg-white/90 px-5 py-8 backdrop-blur-sm sm:px-8 lg:px-10 xl:px-14"
+      aria-label="Story categories"
+      style="-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);"
+    >
+      <p class="text-center text-xs font-medium uppercase tracking-[0.3em] text-neutral-500 lg:text-left">Stories</p>
+      <div class="mt-5 flex justify-center gap-8 overflow-x-auto pb-1 lg:justify-start lg:gap-10">
+        {configs.map((cfg) => (
+          <a
+            href={`#section-${cfg.category}`}
+            data-hero-cat={cfg.category}
+            class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+          >
+            <span
+              class={`flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br ${categoryGradients[cfg.category] ?? 'from-neutral-50 to-white'} text-sm font-semibold ${categoryTextColors[cfg.category] ?? 'text-neutral-900'} shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]`}
+              aria-hidden="true"
+            >
+              {cfg.category.charAt(0).toUpperCase()}
+            </span>
+            <span class="text-xs font-medium text-neutral-700">
+              {cfg.hero_title.replace('The ', '').replace(' Issue', '')}
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <main class="mx-auto max-w-6xl px-5 py-12 text-center sm:px-8 md:py-16 lg:max-w-none lg:px-10 lg:py-14 lg:text-left xl:px-14">
+      <div class="js-reveal-collection mt-14 space-y-16 md:mt-20 md:space-y-20 lg:mt-16">
+        {configs.map((cfg) => {
+          const catStories = storiesByCategory[cfg.category] ?? [];
+          const label = cfg.hero_title.replace('The ', '').replace(' Issue', '');
+          return (
+            <section id={`section-${cfg.category}`} class="anchor-section" aria-labelledby={`${cfg.category}-heading`}>
+              <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-end sm:justify-between lg:items-end">
+                <h2
+                  id={`${cfg.category}-heading`}
+                  class="js-reveal-collection-title font-serif text-2xl font-semibold transition-all duration-1000 ease-out sm:text-3xl text-center lg:text-left"
+                >
+                  {label}
+                </h2>
+                <a href={`/archive?cat=${cfg.category}`} class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline">
+                  View All
+                </a>
+              </div>
+
+              {catStories.length === 0 ? (
+                <p class="mt-8 text-sm text-neutral-400">No stories yet.</p>
+              ) : (
+                <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
+                  {catStories.slice(0, 3).map((story) => (
+                    <a
+                      href={`/story/${story.slug}`}
+                      class="js-reveal-card group flex flex-col border border-neutral-200 bg-white text-neutral-900 shadow-sm no-underline outline-none transition-[box-shadow,transform] focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 active:scale-[0.98]"
+                    >
+                      <div class="aspect-[3/4] overflow-hidden bg-neutral-100">
+                        <img
+                          src={story.social_img}
+                          alt=""
+                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                          width="600"
+                          height="800"
+                          decoding="async"
+                        />
+                      </div>
+                      <div class="flex flex-1 flex-col p-5 sm:p-6">
+                        <h3 class="font-serif text-xl font-semibold">{story.social_title}</h3>
+                        <p class="mt-2 flex-1 text-sm text-neutral-600 line-clamp-2">{story.intro_text}</p>
+                        <span class="shop-look-btn mt-5 inline-flex min-h-[48px] items-center justify-center border border-neutral-900 bg-neutral-900 px-5 py-3 text-center text-sm font-medium tracking-wide text-white transition-all duration-300 group-hover:border-neutral-700 group-hover:bg-white group-hover:text-neutral-900 group-hover:shadow-lg sm:min-h-[52px] lg:w-full">
+                          Shop the Look
+                        </span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
+      </div>
+    </main>
+  </div>
+
+  <script define:vars={{ heroCategories, categoryOrder }}>
+    (function () {
+      var HERO_CATEGORIES = heroCategories;
+      var CATEGORY_ORDER = categoryOrder;
+      var KEY_TO_INDEX = {};
+      CATEGORY_ORDER.forEach(function (k, i) { KEY_TO_INDEX[k] = i; });
+
+      var v0 = document.getElementById('hero-video-0');
+      var v1 = document.getElementById('hero-video-1');
+      var fullLink = document.getElementById('hero-full-link');
+      var discoverBtn = document.getElementById('hero-discover-btn');
+      var titleEl = document.querySelector('.js-hero-title');
+      var pills = document.querySelectorAll('.story-pill[data-hero-cat]');
+
+      if (!v0 || !v1 || !fullLink || !discoverBtn || !titleEl) return;
+
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var fadeMs = reduced ? 0 : 1000;
+      var layers = [v0, v1];
+      var activeLayer = 0;
+      var categoryIndex = 0;
+      var loopCount = 0;
+      var crossfading = false;
+
+      function getActiveVideo() { return layers[activeLayer]; }
+      function getInactiveVideo() { return layers[1 - activeLayer]; }
+      function cfgAtIndex(idx) { return HERO_CATEGORIES[CATEGORY_ORDER[idx]]; }
+
+      function updateHeroUI(idx) {
+        var c = cfgAtIndex(idx);
+        titleEl.textContent = c.title;
+        fullLink.href = c.link;
+        fullLink.setAttribute('aria-label', 'Discover ' + c.title + ' — view the archive');
+        discoverBtn.href = c.link;
+      }
+
+      function detachEndedListeners() {
+        layers.forEach(function (v) { v.removeEventListener('ended', onVideoEnded); });
+      }
+
+      function onVideoEnded(e) {
+        if (crossfading) return;
+        var v = e.target;
+        if (v !== getActiveVideo()) return;
+        loopCount++;
+        if (loopCount < 2) {
+          v.currentTime = 0;
+          var p = v.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+          return;
+        }
+        loopCount = 0;
+        crossfadeToCategoryIndex((categoryIndex + 1) % CATEGORY_ORDER.length);
+      }
+
+      function attachEndedListener() {
+        getActiveVideo().addEventListener('ended', onVideoEnded);
+      }
+
+      function crossfadeToCategoryIndex(targetIdx) {
+        if (crossfading) return;
+        if (targetIdx === categoryIndex) {
+          loopCount = 0;
+          var cur = getActiveVideo();
+          cur.currentTime = 0;
+          var pr = cur.play();
+          if (pr && typeof pr.catch === 'function') pr.catch(function () {});
+          return;
+        }
+        crossfading = true;
+        detachEndedListeners();
+        var outgoing = getActiveVideo();
+        var incoming = getInactiveVideo();
+        var cfg = cfgAtIndex(targetIdx);
+        incoming.src = cfg.video;
+        incoming.load();
+
+        function beginTransition() {
+          incoming.classList.add('is-on-top', 'is-visible');
+          outgoing.classList.remove('is-visible', 'is-on-top');
+          var p = incoming.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+          window.setTimeout(function () {
+            outgoing.pause();
+            activeLayer = 1 - activeLayer;
+            categoryIndex = targetIdx;
+            updateHeroUI(categoryIndex);
+            loopCount = 0;
+            getActiveVideo().classList.add('is-on-top');
+            attachEndedListener();
+            var playAgain = getActiveVideo().play();
+            if (playAgain && typeof playAgain.catch === 'function') playAgain.catch(function () {});
+            crossfading = false;
+          }, fadeMs);
+        }
+
+        function onceCanPlay() {
+          incoming.removeEventListener('canplay', onceCanPlay);
+          beginTransition();
+        }
+
+        if (incoming.readyState >= 3) { beginTransition(); }
+        else { incoming.addEventListener('canplay', onceCanPlay); }
+      }
+
+      updateHeroUI(0);
+      attachEndedListener();
+      var firstPlay = getActiveVideo().play();
+      if (firstPlay && typeof firstPlay.catch === 'function') firstPlay.catch(function () {});
+
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function (e) {
+          var key = pill.getAttribute('data-hero-cat');
+          if (!key) return;
+          var idx = KEY_TO_INDEX[key];
+          if (idx === undefined) return;
+          e.preventDefault();
+          loopCount = 0;
+          crossfadeToCategoryIndex(idx);
+          var href = pill.getAttribute('href') || '';
+          if (href.charAt(0) === '#') {
+            var sec = document.getElementById(href.slice(1));
+            if (sec) sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Scroll reveal
+      var reduced2 = reduced;
+      function revealHero() {
+        var kicker = document.querySelector('.js-hero-kicker');
+        var title = document.querySelector('.js-hero-title');
+        if (reduced2) {
+          if (kicker) kicker.classList.add('active');
+          if (title) title.classList.add('active');
+          return;
+        }
+        requestAnimationFrame(function () {
+          if (kicker) { kicker.style.transitionDelay = '0ms'; kicker.classList.add('active'); }
+          if (title) { title.style.transitionDelay = '500ms'; title.classList.add('active'); }
+        });
+      }
+
+      var collectionEl = document.querySelector('.js-reveal-collection');
+      var collectionTitles = document.querySelectorAll('.js-reveal-collection-title');
+      var cards = document.querySelectorAll('.js-reveal-card');
+
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var t = entry.target;
+          collectionTitles.forEach(function (el) { el.classList.add('active'); });
+          if (reduced2) {
+            cards.forEach(function (c) { c.classList.add('active'); });
+          } else {
+            cards.forEach(function (card, i) {
+              window.setTimeout(function () { card.classList.add('active'); }, i * 250);
+            });
+          }
+          obs.unobserve(t);
+        });
+      }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+
+      if (collectionEl) obs.observe(collectionEl);
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', revealHero);
+      } else {
+        revealHero();
+      }
+    })();
+  </script>
+</Base>
