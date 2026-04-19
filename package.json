@@ -12,7 +12,7 @@
     "test": "vitest",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "build-deploy:prod": "astro build && cd dist/server && wrangler deploy"
+    "build-deploy:prod": "astro build && rm -f .wrangler/deploy/config.json && wrangler deploy --config dist/server/wrangler.json"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.10",
