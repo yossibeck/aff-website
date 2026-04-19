@@ -1,0 +1,10 @@
+---
+import { getStorySlugByProductId } from '../../lib/db';
+
+const { productId } = Astro.params;
+const db = Astro.locals.runtime.env.DB;
+const { tenant } = Astro.locals;
+
+const slug = await getStorySlugByProductId(db, tenant.id, productId!);
+return Astro.redirect(slug ? `/story/${slug}` : '/archive', 302);
+---
