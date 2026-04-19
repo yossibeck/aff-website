@@ -5,6 +5,13 @@ const { productId } = Astro.params;
 const db = Astro.locals.runtime.env.DB;
 const { tenant } = Astro.locals;
 
-const slug = await getStorySlugByProductId(db, tenant.id, productId!);
+if (!productId) return Astro.redirect('/archive', 302);
+
+let slug: string | null = null;
+try {
+  slug = await getStorySlugByProductId(db, tenant.id, productId);
+} catch {
+  return Astro.redirect('/archive', 302);
+}
 return Astro.redirect(slug ? `/story/${slug}` : '/archive', 302);
 ---
