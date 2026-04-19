@@ -26,6 +26,7 @@
 | `src/layouts/Base.astro` | Create | Shared nav, fonts, Tailwind, footer (white + dark modes) |
 | `src/pages/index.astro` | Create | Hero landing (site_config) + category pills + story grids |
 | `src/pages/archive.astro` | Create | Dark-bg story gallery, `?cat=` filter |
+| `src/pages/p/[productId].astro` | Create | Product→story redirect via story_products |
 | `src/pages/story/[slug].astro` | Create | Social anchor + intro + product sections |
 | `db/migrations/001_add_stories_site_config.sql` | Create | Create new tables |
 | `db/seed_sample.sql` | Create | Insert sample row for local testing |
@@ -218,6 +219,15 @@ CREATE TABLE IF NOT EXISTS site_config (
   hero_title     TEXT    NOT NULL,
   UNIQUE(tenant_id, category)
 );
+
+CREATE TABLE IF NOT EXISTS story_products (
+  story_id   INTEGER NOT NULL,
+  product_id TEXT    NOT NULL,
+  tenant_id  INTEGER NOT NULL,
+  PRIMARY KEY (story_id, product_id),
+  FOREIGN KEY (story_id)   REFERENCES stories(id),
+  FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
 ```
 
 - [ ] **Step 3: Write seed file `db/seed_sample.sql`**
@@ -243,6 +253,11 @@ VALUES (
   'True beauty starts with a calm morning. Here is how I set my intention for the day with these essentials.',
   '[{"product_id":"ali_12345","story_text":"I start with this silk dress. It feels like a second skin and makes me feel elegant even before my first coffee.","display_image":"/1st-duck.png"}]'
 );
+
+-- Populate story_products mapping table for the sample story
+-- story_id 1 = morning-glow-routine (first inserted story)
+INSERT OR IGNORE INTO story_products (story_id, product_id, tenant_id)
+VALUES (1, 'ali_12345', 1);
 ```
 
 - [ ] **Step 4: Commit**
@@ -401,6 +416,32 @@ describe('parseSections', () => {
   });
 });
 
+describe('getStoryByProductId (unit-testable wrapper)', () => {
+  it('returns slug when product is in story_products', async () => {
+    const mockDb = {
+      prepare: () => ({
+        bind: () => ({
+          first: async () => ({ slug: 'morning-glow-routine' }),
+        }),
+      }),
+    } as unknown as D1Database;
+    const result = await getStorySlugByProductId(mockDb, 1, 'ali_12345');
+    expect(result).toBe('morning-glow-routine');
+  });
+
+  it('returns null when product has no story', async () => {
+    const mockDb = {
+      prepare: () => ({
+        bind: () => ({
+          first: async () => null,
+        }),
+      }),
+    } as unknown as D1Database;
+    const result = await getStorySlugByProductId(mockDb, 1, 'unknown');
+    expect(result).toBeNull();
+  });
+});
+
 describe('mergeSectionsWithProducts', () => {
   it('merges affiliate_url and product_title from product map', () => {
     const sections = [{ product_id: 'ali_123', story_text: 'text', display_image: 'img.jpg' }];
@@ -425,11 +466,11 @@ describe('mergeSectionsWithProducts', () => {
 - [ ] **Step 2: Run tests and verify they fail**
 
 ```bash
-cd /Users/yossibeck/dev/yb/aff-website
+cd /Users/yossibeck/dev/yb/aff-website/.worktrees/feat-astro-d1
 npm test -- --run
 ```
 
-Expected: FAIL — `parseSections` and `mergeSectionsWithProducts` are not defined.
+Expected: FAIL — `parseSections`, `mergeSectionsWithProducts`, and `getStorySlugByProductId` are not defined.
 
 - [ ] **Step 3: Write `src/lib/db.ts`**
 
@@ -557,6 +598,24 @@ export async function getStories(
   return result.results ?? [];
 }
 
+export async function getStorySlugByProductId(
+  db: D1Database,
+  tenantId: number,
+  productId: string
+): Promise<string | null> {
+  const result = await db
+    .prepare(
+      `SELECT s.slug
+       FROM story_products sp
+       JOIN stories s ON s.id = sp.story_id
+       WHERE sp.product_id = ? AND sp.tenant_id = ?
+       LIMIT 1`
+    )
+    .bind(productId, tenantId)
+    .first<{ slug: string }>();
+  return result?.slug ?? null;
+}
+
 export async function getStory(
   db: D1Database,
   tenantId: number,
@@ -611,6 +670,41 @@ Expected: PASS — all 5 tests pass.
 ```bash
 git add src/lib/db.ts src/lib/db.test.ts
 git commit -m "feat: add D1 query functions with unit tests"
+```
+
+---
+
+## Task 8b: Create src/pages/p/[productId].astro
+
+**Files:**
+- Create: `src/pages/p/[productId].astro`
+
+Thin redirect page. Receives a `product_id` URL param, queries `story_products` via `getStorySlugByProductId`, and issues a 302 to `/story/{slug}`. Falls back to `/archive` if no story found. Renders no HTML.
+
+- [ ] **Step 1: Write `src/pages/p/[productId].astro`**
+
+Create `/Users/yossibeck/dev/yb/aff-website/.worktrees/feat-astro-d1/src/pages/p/[productId].astro`:
+
+```astro
+---
+import { getStorySlugByProductId } from '../../lib/db';
+
+const { tenant } = Astro.locals;
+const db = Astro.locals.runtime.env.DB;
+
+const { productId } = Astro.params;
+const slug = await getStorySlugByProductId(db, tenant.id, productId!);
+
+return Astro.redirect(slug ? `/story/${slug}` : '/archive', 302);
+---
+```
+
+- [ ] **Step 2: Commit**
+
+```bash
+cd /Users/yossibeck/dev/yb/aff-website/.worktrees/feat-astro-d1
+git add src/pages/p/
+git commit -m "feat: add /p/[productId] redirect page via story_products table"
 ```
 
 ---

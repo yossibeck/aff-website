@@ -94,7 +94,18 @@ CREATE TABLE IF NOT EXISTS site_config (
   hero_title     TEXT    NOT NULL,
   UNIQUE(tenant_id, category)
 );
+
+CREATE TABLE IF NOT EXISTS story_products (
+  story_id   INTEGER NOT NULL,
+  product_id TEXT    NOT NULL,
+  tenant_id  INTEGER NOT NULL,
+  PRIMARY KEY (story_id, product_id),
+  FOREIGN KEY (story_id)   REFERENCES stories(id),
+  FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
 ```
+
+**`story_products` design note:** `sections_json` remains the single source of truth for *editorial rendering order* (which product appears in which section, with what story_text and display_image). `story_products` is a denormalised lookup index — populated whenever a story is created or updated — enabling O(1) product→story resolution without scanning JSON blobs. The `/p/[product_id]` redirect page uses this table exclusively.
 
 ### Local dev seeding workflow
 
@@ -139,8 +150,11 @@ interface StoryWithSections extends Omit<Story, 'sections_json'> {
 | `getSiteConfigs(db, tenantId)` | `SELECT * FROM site_config WHERE tenant_id = ?` | index.astro |
 | `getStories(db, tenantId, category?)` | `SELECT * FROM stories WHERE tenant_id = ? [AND category = ?] ORDER BY id DESC` | archive.astro |
 | `getStory(db, tenantId, slug)` | fetch story, parse `sections_json`, batch-fetch products by `product_id` list, merge `affiliate_url` | story/[slug].astro |
+| `getStoryByProductId(db, tenantId, productId)` | `SELECT s.slug FROM story_products sp JOIN stories s ON s.id = sp.story_id WHERE sp.product_id = ? AND sp.tenant_id = ?` | p/[productId].astro |
 
 `getStory` parses `sections_json` server-side (JSON.parse), extracts all `product_id` values, runs one `SELECT … WHERE product_id IN (…)` query, then merges `affiliate_url` onto each section before returning.
+
+`getStoryByProductId` queries `story_products` directly — no JSON scanning. Returns the story `slug` or `null`.
 
 ---
 
@@ -163,6 +177,10 @@ interface StoryWithSections extends Omit<Story, 'sections_json'> {
 - Renders existing card grid layout from `index.html`
 - Card: `social_img` as image, `social_title` as title, link to `/story/{slug}`
 - Category filter tabs rendered from distinct categories in result
+
+### `p/[productId].astro` — Product Redirect
+
+Thin redirect page. Receives a `product_id` URL parameter, calls `getStoryByProductId`, and redirects to `/story/{slug}`. Falls back to `/archive` if no story found. No HTML rendered — pure 302.
 
 ### `story/[slug].astro` — Single Story
 
