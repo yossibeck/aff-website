@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aura St. Claire — Category Hero & Stories</title>
+  <title>Aura St. Claire — Modern Hero / Split Editorial</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
@@ -46,40 +46,6 @@
       html {
         scroll-behavior: auto;
       }
-      .hero-slide {
-      opacity: 0;
-      transition: opacity 700ms ease-out;
-      pointer-events: none;
-    }
-    .hero-slide.is-active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .hero-scroll-hint {
-      animation: hero-scroll-nudge 2.2s ease-in-out infinite;
-    }
-    @keyframes hero-scroll-nudge {
-      0%,
-      100% {
-        transform: translateY(0);
-        opacity: 0.55;
-      }
-      50% {
-        transform: translateY(6px);
-        opacity: 0.95;
-      }
-    }
-    .story-pill.is-active .story-pill-ring {
-      box-shadow: 0 0 0 2px rgb(23 23 23);
-    }
-
-      .hero-slide {
-        opacity: 1 !important;
-        transition: none !important;
-      }
-      .hero-scroll-hint {
-        animation: none !important;
-      }
       .js-hero-kicker,
       .js-hero-title,
       .js-reveal-story,
@@ -87,6 +53,9 @@
       .js-reveal-card {
         opacity: 1 !important;
         transform: none !important;
+        transition: none !important;
+      }
+      .hero-video-layer {
         transition: none !important;
       }
     }
@@ -107,6 +76,26 @@
     .js-hero-title.active {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    /* Full-bleed hero: dual-layer video cross-fade (1s opacity) */
+    .hero-video-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-video-layer.is-visible {
+      opacity: 1;
+      z-index: 2;
+    }
+    .hero-video-layer.is-on-top {
+      z-index: 3;
     }
 
     .js-reveal-story,
@@ -178,201 +167,103 @@
     </div>
   </header>
 
-  <!-- Category hero slider: desktop sticky half-width + editorial column. Slides sync with Stories row. -->
-  <div class="flex min-h-[calc(100dvh-4rem)] flex-col lg:min-h-[calc(100dvh-4rem)] lg:flex-row">
-    <aside
-      id="category-hero"
-      class="relative h-[min(72vh,520px)] min-h-[280px] w-full shrink-0 overflow-hidden bg-neutral-950 lg:sticky lg:top-[4rem] lg:h-[calc(100dvh-4rem)] lg:min-h-0 lg:w-1/2"
-      aria-roledescription="carousel"
-      aria-label="Category highlights"
-    >
-      <div class="absolute inset-0">
-        <!-- Wellness -->
-        <div
-          class="hero-slide is-active absolute inset-0"
-          data-hero-slide="0"
-          role="group"
-          aria-roledescription="slide"
-          aria-label="Wellness"
-          aria-hidden="false"
-        >
-          <video
-            class="hero-slide-video absolute inset-0 h-full w-full object-cover"
-            data-hero-video
-            muted
-            loop
-            playsinline
-            poster="heidi-in-bg.png"
-          >
-            <source src="original.mp4" type="video/mp4" />
-          </video>
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 lg:bg-gradient-to-r lg:from-black/20 lg:via-transparent lg:to-black/35"
-            aria-hidden="true"
-          ></div>
-          <div
-            class="relative z-10 flex h-full min-h-[280px] flex-col justify-end px-5 pb-24 sm:px-8 md:px-12 lg:justify-center lg:px-10 lg:pb-8 xl:px-14"
-          >
-            <p
-              class="js-hero-kicker mb-3 text-xs font-medium uppercase tracking-[0.35em] text-white/85 transition-all duration-1000 ease-out"
-            >
-              Aura St. Claire
-            </p>
-            <h1 class="js-hero-title font-serif text-4xl font-semibold leading-tight text-white transition-all duration-1000 ease-out sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">
-              Wellness
-            </h1>
-            <a
-              href="#section-wellness"
-              class="js-hero-cta mt-8 inline-flex w-fit items-center border border-white/90 bg-white/10 px-8 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-sm transition hover:bg-white hover:text-neutral-900"
-            >
-              Click to discover
-            </a>
-          </div>
-        </div>
-        <!-- Street -->
-        <div
-          class="hero-slide absolute inset-0"
-          data-hero-slide="1"
-          role="group"
-          aria-roledescription="slide"
-          aria-label="Street"
-          aria-hidden="true"
-        >
-          <video
-            class="hero-slide-video absolute inset-0 h-full w-full object-cover"
-            data-hero-video
-            muted
-            loop
-            playsinline
-            poster="1st-duck.png"
-          >
-            <source src="o.mp4" type="video/mp4" />
-          </video>
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 lg:bg-gradient-to-r lg:from-black/20 lg:via-transparent lg:to-black/35"
-            aria-hidden="true"
-          ></div>
-          <div
-            class="relative z-10 flex h-full min-h-[280px] flex-col justify-end px-5 pb-24 sm:px-8 md:px-12 lg:justify-center lg:px-10 lg:pb-8 xl:px-14"
-          >
-            <p class="mb-3 text-xs font-medium uppercase tracking-[0.35em] text-white/85">Aura St. Claire</p>
-            <h2 class="font-serif text-4xl font-semibold leading-tight text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">Street</h2>
-            <a
-              href="#section-street"
-              class="mt-8 inline-flex w-fit items-center border border-white/90 bg-white/10 px-8 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-sm transition hover:bg-white hover:text-neutral-900"
-            >
-              Click to discover
-            </a>
-          </div>
-        </div>
-        <!-- Beauty -->
-        <div
-          class="hero-slide absolute inset-0"
-          data-hero-slide="2"
-          role="group"
-          aria-roledescription="slide"
-          aria-label="Beauty"
-          aria-hidden="true"
-        >
-          <video
-            class="hero-slide-video absolute inset-0 h-full w-full object-cover"
-            data-hero-video
-            muted
-            loop
-            playsinline
-            poster="heidi-in-bg.png"
-          >
-            <source src="lace1.mp4" type="video/mp4" />
-          </video>
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-black/25 lg:bg-gradient-to-r lg:from-black/20 lg:via-transparent lg:to-black/35"
-            aria-hidden="true"
-          ></div>
-          <div
-            class="relative z-10 flex h-full min-h-[280px] flex-col justify-end px-5 pb-24 sm:px-8 md:px-12 lg:justify-center lg:px-10 lg:pb-8 xl:px-14"
-          >
-            <p class="mb-3 text-xs font-medium uppercase tracking-[0.35em] text-white/85">Aura St. Claire</p>
-            <h2 class="font-serif text-4xl font-semibold leading-tight text-white sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">Beauty</h2>
-            <a
-              href="#section-beauty"
-              class="mt-8 inline-flex w-fit items-center border border-white/90 bg-white/10 px-8 py-3 text-xs font-semibold uppercase tracking-[0.25em] text-white backdrop-blur-sm transition hover:bg-white hover:text-neutral-900"
-            >
-              Click to discover
-            </a>
-          </div>
-        </div>
-      </div>
-      <div
-        class="pointer-events-none absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1 text-white/75"
-        aria-hidden="true"
+  <!-- Full-bleed hero: single background video (home-style), dual layers for cross-fade -->
+  <section
+    class="relative min-h-[calc(100dvh-4rem)] w-full overflow-hidden bg-neutral-950"
+    aria-label="Featured category"
+  >
+    <div class="absolute inset-0 z-0">
+      <video
+        id="hero-video-0"
+        class="hero-video-layer is-visible is-on-top"
+        autoplay
+        muted
+        playsinline
+        preload="auto"
+        poster="heidi-in-bg.png"
       >
-        <span class="hero-scroll-hint text-[10px] font-medium uppercase tracking-[0.45em]">Scroll</span>
-        <span class="hero-scroll-hint text-lg leading-none">↓</span>
-      </div>
-    </aside>
+        <source src="o.mp4" type="video/mp4" />
+      </video>
+      <video id="hero-video-1" class="hero-video-layer" muted playsinline preload="metadata"></video>
+    </div>
+    <a
+      id="hero-full-link"
+      href="archive.html?cat=wellness"
+      class="absolute inset-0 z-[1]"
+      aria-label="Discover Wellness — view the archive"
+    ></a>
+    <div
+      class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-t from-black/60 via-black/10 to-black/30"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="pointer-events-none relative z-10 flex min-h-[calc(100dvh-4rem)] w-full flex-col justify-end px-5 pb-12 pt-24 sm:px-10 sm:pb-16 md:px-14 lg:justify-center lg:px-16 lg:pb-20 xl:px-20"
+    >
+      <p
+        class="js-hero-kicker mb-3 text-xs font-medium uppercase tracking-[0.35em] text-white/85 transition-all duration-1000 ease-out"
+      >
+        Aura St. Claire
+      </p>
+      <h1
+        class="js-hero-title max-w-4xl font-serif text-4xl font-semibold leading-[1.08] text-white transition-all duration-1000 ease-out sm:text-5xl md:text-6xl lg:text-7xl"
+      >
+        Wellness
+      </h1>
+      <a
+        id="hero-discover-btn"
+        href="archive.html?cat=wellness"
+        class="hero-discover-btn pointer-events-auto mt-10 inline-flex w-full max-w-md items-center justify-center border-2 border-white bg-white/10 px-10 py-4 text-center font-serif text-base font-normal uppercase tracking-[0.2em] text-white shadow-[0_16px_48px_rgba(0,0,0,0.45)] backdrop-blur-[6px] transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 sm:mt-12 sm:text-lg md:text-xl"
+      >
+        CLICK TO DISCOVER
+      </a>
+    </div>
+  </section>
 
-    <div class="w-full lg:w-1/2 lg:shrink-0">
-      <!-- Stories row: below hero column, scrolls with main -->
+  <div class="w-full">
+      <!-- Stories row -->
       <section
         class="border-b border-neutral-200/80 bg-white/90 px-5 py-8 backdrop-blur-sm sm:px-8 lg:px-10 xl:px-14"
         aria-label="Story categories"
         style="-webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);"
       >
         <p class="text-center text-xs font-medium uppercase tracking-[0.3em] text-neutral-500 lg:text-left">Stories</p>
-        <p class="mt-2 hidden text-sm text-neutral-500 lg:block">Select a story to change the hero scene, or scroll to shop the edit below.</p>
-        <div
-          class="mt-5 flex justify-center gap-8 overflow-x-auto pb-1 lg:justify-start lg:gap-10"
-          role="tablist"
-          aria-label="Category hero"
-        >
-          <button
-            type="button"
-            class="story-pill is-active group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
-            data-hero-index="0"
-            role="tab"
-            aria-selected="true"
-            aria-controls="category-hero"
-            id="story-tab-wellness"
+        <div class="mt-5 flex justify-center gap-8 overflow-x-auto pb-1 lg:justify-start lg:gap-10">
+          <a
+            href="#section-wellness"
+            data-hero-cat="wellness"
+            class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
           >
             <span
-              class="story-pill-ring flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-emerald-50 to-white text-sm font-semibold text-emerald-900 shadow-sm transition group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]"
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-emerald-50 to-white text-sm font-semibold text-emerald-900 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
               aria-hidden="true"
               >W</span
             >
             <span class="text-xs font-medium text-neutral-700">Wellness</span>
-          </button>
-          <button
-            type="button"
+          </a>
+          <a
+            href="#section-street"
+            data-hero-cat="street"
             class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
-            data-hero-index="1"
-            role="tab"
-            aria-selected="false"
-            aria-controls="category-hero"
-            id="story-tab-street"
           >
             <span
-              class="story-pill-ring flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-amber-50 to-white text-sm font-semibold text-amber-950 shadow-sm transition group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]"
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-amber-50 to-white text-sm font-semibold text-amber-950 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
               aria-hidden="true"
               >S</span
             >
             <span class="text-xs font-medium text-neutral-700">Street</span>
-          </button>
-          <button
-            type="button"
+          </a>
+          <a
+            href="#section-beauty"
+            data-hero-cat="beauty"
             class="story-pill group flex min-w-[4.5rem] flex-col items-center gap-2 text-center focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
-            data-hero-index="2"
-            role="tab"
-            aria-selected="false"
-            aria-controls="category-hero"
-            id="story-tab-beauty"
           >
             <span
-              class="story-pill-ring flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-rose-50 to-white text-sm font-semibold text-rose-950 shadow-sm transition group-hover:scale-105 sm:h-[4.5rem] sm:w-[4.5rem]"
+              class="flex h-16 w-16 items-center justify-center rounded-full border border-neutral-200 bg-gradient-to-br from-rose-50 to-white text-sm font-semibold text-rose-950 shadow-sm ring-neutral-900/10 transition group-hover:scale-105 group-hover:ring-2 sm:h-[4.5rem] sm:w-[4.5rem]"
               aria-hidden="true"
               >B</span
             >
             <span class="text-xs font-medium text-neutral-700">Beauty</span>
-          </button>
+          </a>
         </div>
       </section>
 
@@ -620,55 +511,15 @@
           </section>
         </div>
       </main>
-    </div>
   </div>
 
   <footer class="border-t border-neutral-200 py-10 text-center text-sm text-neutral-500">
-    Aura St. Claire — Category hero slider · Stories sync · Featured collections below
+    Aura St. Claire — Full-bleed hero · rotating categories
   </footer>
 
   <script>
     (function () {
       var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      var heroSlides = document.querySelectorAll('[data-hero-slide]');
-      var storyPills = document.querySelectorAll('.story-pill[data-hero-index]');
-
-      function setHeroSlide(idx) {
-        if (!heroSlides.length) return;
-        var n = heroSlides.length;
-        var i = ((idx % n) + n) % n;
-        heroSlides.forEach(function (slide, j) {
-          var on = j === i;
-          slide.classList.toggle('is-active', on);
-          slide.setAttribute('aria-hidden', on ? 'false' : 'true');
-          var v = slide.querySelector('[data-hero-video]');
-          if (v) {
-            if (on && !reduced) {
-              v.play().catch(function () {});
-            } else {
-              try {
-                v.pause();
-              } catch (e) {}
-            }
-          }
-        });
-        storyPills.forEach(function (pill) {
-          var pi = parseInt(pill.getAttribute('data-hero-index'), 10);
-          var on = pi === i;
-          pill.classList.toggle('is-active', on);
-          pill.setAttribute('aria-selected', on ? 'true' : 'false');
-        });
-      }
-
-      storyPills.forEach(function (pill) {
-        pill.addEventListener('click', function () {
-          var idx = parseInt(pill.getAttribute('data-hero-index'), 10);
-          setHeroSlide(idx);
-        });
-      });
-
-      setHeroSlide(0);
 
       function revealHero() {
         var kicker = document.querySelector('.js-hero-kicker');
@@ -754,6 +605,160 @@
       } else {
         revealHero();
       }
+    })();
+  </script>
+  <script>
+    (function () {
+      var HERO_CATEGORIES = {
+        wellness: { title: 'Wellness', video: 'o.mp4', link: 'archive.html?cat=wellness' },
+        street: { title: 'Street', video: 'pullover.mp4', link: 'archive.html?cat=street' },
+        beauty: { title: 'Beauty', video: 'blue-zoom.mp4', link: 'archive.html?cat=beauty' },
+      };
+      var CATEGORY_ORDER = ['wellness', 'street', 'beauty'];
+
+      var KEY_TO_INDEX = { wellness: 0, street: 1, beauty: 2 };
+
+      var v0 = document.getElementById('hero-video-0');
+      var v1 = document.getElementById('hero-video-1');
+      var fullLink = document.getElementById('hero-full-link');
+      var discoverBtn = document.getElementById('hero-discover-btn');
+      var titleEl = document.querySelector('.js-hero-title');
+      var pills = document.querySelectorAll('.story-pill[data-hero-cat]');
+
+      if (!v0 || !v1 || !fullLink || !discoverBtn || !titleEl) return;
+
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var fadeMs = reduced ? 0 : 1000;
+
+      var layers = [v0, v1];
+      var activeLayer = 0;
+      var categoryIndex = 0;
+      var loopCount = 0;
+      var crossfading = false;
+
+      function getActiveVideo() {
+        return layers[activeLayer];
+      }
+
+      function getInactiveVideo() {
+        return layers[1 - activeLayer];
+      }
+
+      function cfgAtIndex(idx) {
+        return HERO_CATEGORIES[CATEGORY_ORDER[idx]];
+      }
+
+      function updateHeroUI(idx) {
+        var c = cfgAtIndex(idx);
+        titleEl.textContent = c.title;
+        fullLink.href = c.link;
+        fullLink.setAttribute('aria-label', 'Discover ' + c.title + ' — view the archive');
+        discoverBtn.href = c.link;
+      }
+
+      function detachEndedListeners() {
+        layers.forEach(function (v) {
+          v.removeEventListener('ended', onVideoEnded);
+        });
+      }
+
+      function onVideoEnded(e) {
+        if (crossfading) return;
+        var v = e.target;
+        if (v !== getActiveVideo()) return;
+        loopCount++;
+        if (loopCount < 2) {
+          v.currentTime = 0;
+          var p = v.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+          return;
+        }
+        loopCount = 0;
+        var nextIdx = (categoryIndex + 1) % CATEGORY_ORDER.length;
+        crossfadeToCategoryIndex(nextIdx);
+      }
+
+      function attachEndedListener() {
+        getActiveVideo().addEventListener('ended', onVideoEnded);
+      }
+
+      function crossfadeToCategoryIndex(targetIdx) {
+        if (crossfading) return;
+
+        if (targetIdx === categoryIndex) {
+          loopCount = 0;
+          var cur = getActiveVideo();
+          cur.currentTime = 0;
+          var pr = cur.play();
+          if (pr && typeof pr.catch === 'function') pr.catch(function () {});
+          return;
+        }
+
+        crossfading = true;
+        detachEndedListeners();
+
+        var outgoing = getActiveVideo();
+        var incoming = getInactiveVideo();
+        var cfg = cfgAtIndex(targetIdx);
+
+        incoming.src = cfg.video;
+        incoming.load();
+
+        function beginTransition() {
+          incoming.classList.add('is-on-top');
+          incoming.classList.add('is-visible');
+          outgoing.classList.remove('is-visible', 'is-on-top');
+
+          var p = incoming.play();
+          if (p && typeof p.catch === 'function') p.catch(function () {});
+
+          window.setTimeout(function () {
+            outgoing.pause();
+            activeLayer = 1 - activeLayer;
+            categoryIndex = targetIdx;
+            updateHeroUI(categoryIndex);
+            loopCount = 0;
+            getActiveVideo().classList.add('is-on-top');
+            attachEndedListener();
+            var playAgain = getActiveVideo().play();
+            if (playAgain && typeof playAgain.catch === 'function') playAgain.catch(function () {});
+            crossfading = false;
+          }, fadeMs);
+        }
+
+        function onceCanPlay() {
+          incoming.removeEventListener('canplay', onceCanPlay);
+          beginTransition();
+        }
+
+        if (incoming.readyState >= 3) {
+          beginTransition();
+        } else {
+          incoming.addEventListener('canplay', onceCanPlay);
+        }
+      }
+
+      updateHeroUI(0);
+      attachEndedListener();
+      var firstPlay = getActiveVideo().play();
+      if (firstPlay && typeof firstPlay.catch === 'function') firstPlay.catch(function () {});
+
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', function (e) {
+          var key = pill.getAttribute('data-hero-cat');
+          if (key === undefined || key === null) return;
+          var idx = KEY_TO_INDEX[key];
+          if (idx === undefined) return;
+          e.preventDefault();
+          loopCount = 0;
+          crossfadeToCategoryIndex(idx);
+          var href = pill.getAttribute('href') || '';
+          if (href.charAt(0) === '#') {
+            var sec = document.getElementById(href.slice(1));
+            if (sec) sec.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+          }
+        });
+      });
     })();
   </script>
 </body>
