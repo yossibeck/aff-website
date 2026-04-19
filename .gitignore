@@ -1,2 +1,19 @@
 # Worktrees
 .worktrees/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Wrangler local state
+.wrangler/
+
+# Local D1 export — contains real product data, do not commit
+db/remote-backup.sql
+
+# Environment secrets
+.env
+.env.local
+.dev.vars
