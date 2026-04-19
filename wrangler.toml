@@ -1,1 +1,8 @@
 name = "aff-website"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "aff-story-db"
+database_id = "b55e548c-cad5-41ae-a89d-e613dd1909bc"
