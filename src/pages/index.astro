@@ -18,7 +18,7 @@ for (const cfg of configs) {
   heroCategories[cfg.category] = {
     title: cfg.hero_title,
     video: cfg.hero_video_url,
-    link: `/archive?cat=${cfg.category}`,
+    link: `/styles?cat=${cfg.category}`,
   };
   categoryOrder.push(cfg.category);
 }
@@ -115,7 +115,7 @@ const categoryTextColors: Record<string, string> = {
     </div>
     <a
       id="hero-full-link"
-      href={firstConfig?.link ?? '/archive'}
+      href={firstConfig?.link ?? '/styles'}
       class="absolute inset-0 z-[1]"
       aria-label={`Discover ${firstConfig?.title ?? ''} — view the archive`}
     ></a>
@@ -132,7 +132,7 @@ const categoryTextColors: Record<string, string> = {
       </h1>
       <a
         id="hero-discover-btn"
-        href={firstConfig?.link ?? '/archive'}
+        href={firstConfig?.link ?? '/styles'}
         class="hero-discover-btn pointer-events-auto mt-10 inline-flex w-full max-w-md items-center justify-center border-2 border-white bg-white/10 px-10 py-4 text-center font-serif text-base font-normal uppercase tracking-[0.2em] text-white shadow-[0_16px_48px_rgba(0,0,0,0.45)] backdrop-blur-[6px] transition hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950 sm:mt-12 sm:text-lg md:text-xl"
       >
         CLICK TO DISCOVER
@@ -183,13 +183,13 @@ const categoryTextColors: Record<string, string> = {
                 >
                   {label}
                 </h2>
-                <a href={`/archive?cat=${cfg.category}`} class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline">
+                <a href={`/styles?cat=${cfg.category}`} class="text-sm font-medium text-neutral-600 underline-offset-4 transition hover:text-neutral-900 hover:underline">
                   View All
                 </a>
               </div>
 
               {catStories.length === 0 ? (
-                <p class="mt-8 text-sm text-neutral-400">No stories yet.</p>
+                <p class="mt-8 text-sm font-medium uppercase tracking-[0.2em] text-neutral-400">Coming Soon</p>
               ) : (
                 <div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-10">
                   {catStories.slice(0, 3).map((story) => (

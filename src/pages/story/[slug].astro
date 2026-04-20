@@ -10,7 +10,7 @@ const { slug } = Astro.params;
 const story = await getStory(db, tenant.id, slug!);
 
 if (!story) {
-  return Astro.redirect('/archive', 302);
+  return Astro.redirect('/', 302);
 }
 ---
 <Base title={`${tenant.name} — ${story.social_title}`}>
@@ -118,16 +118,23 @@ if (!story) {
               <p class="mt-4 text-base leading-[1.75] text-neutral-700 sm:text-[1.05rem]">
                 {section.story_text}
               </p>
-              <div class="mt-12 overflow-hidden bg-neutral-50">
+              <a
+                href={section.affiliate_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-12 block overflow-hidden bg-neutral-50"
+                tabindex="-1"
+                aria-hidden="true"
+              >
                 <img
                   src={section.display_image}
                   alt={section.product_title}
-                  class="h-auto w-full object-cover"
+                  class="h-auto w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
                   width="900"
                   height="1200"
                   decoding="async"
                 />
-              </div>
+              </a>
               <a
                 href={section.affiliate_url}
                 target="_blank"
