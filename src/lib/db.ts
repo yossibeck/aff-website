@@ -22,6 +22,7 @@ export interface StoryRow {
   social_img: string;
   intro_text: string;
   sections_json: string;
+  curated_title: string;
 }
 
 export interface StorySection {
