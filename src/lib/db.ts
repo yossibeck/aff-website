@@ -54,7 +54,7 @@ const DEFAULT_TENANT: Tenant = {
   id: 1,
   slug: 'aura',
   name: 'Aura St. Claire',
-  domain: 'aurastclaire.com',
+  domain: 'lp.aurastclaire.com',
 };
 
 export function parseSections(sectionsJson: string): StorySection[] {
