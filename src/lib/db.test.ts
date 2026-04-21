@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseSections, mergeSectionsWithProducts, getStorySlugByProductId } from './db';
+import { parseSections, mergeSectionsWithProducts, getStorySlugByProductId, getProductAffiliateUrl } from './db';
 
 describe('parseSections', () => {
   it('parses valid sections_json', () => {
@@ -65,3 +65,30 @@ describe('getStorySlugByProductId', () => {
     expect(result).toBeNull();
   });
 });
+
+describe('getProductAffiliateUrl', () => {
+  it('returns affiliate_url when product exists', async () => {
+    const mockDb = {
+      prepare: () => ({
+        bind: () => ({
+          first: async () => ({ affiliate_url: 'https://aff.link/123' }),
+        }),
+      }),
+    } as unknown as D1Database;
+    const result = await getProductAffiliateUrl(mockDb, 'ali_123', 1);
+    expect(result).toBe('https://aff.link/123');
+  });
+
+  it('returns null when product not found', async () => {
+    const mockDb = {
+      prepare: () => ({
+        bind: () => ({
+          first: async () => null,
+        }),
+      }),
+    } as unknown as D1Database;
+    const result = await getProductAffiliateUrl(mockDb, 'missing', 1);
+    expect(result).toBeNull();
+  });
+});
+

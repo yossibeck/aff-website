@@ -177,3 +177,17 @@ export async function getStory(
     sections: mergeSectionsWithProducts(sections, productMap),
   };
 }
+
+export async function getProductAffiliateUrl(
+  db: D1Database,
+  productId: string,
+  tenantId: number
+): Promise<string | null> {
+  const row = await db
+    .prepare(
+      "SELECT affiliate_url FROM products WHERE product_id = ? AND tenant_id = ? AND status = 'published'"
+    )
+    .bind(productId, tenantId)
+    .first<{ affiliate_url: string }>();
+  return row?.affiliate_url ?? null;
+}
