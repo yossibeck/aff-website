@@ -6,3 +6,20 @@ binding = "DB"
 database_name = "aff-story-db"
 database_id = "b55e548c-cad5-41ae-a89d-e613dd1909bc"
 remote = true
+
+# Subdomain source tracking — middleware redirects to main domain + ?sc=<platform>
+[[routes]]
+pattern = "ig.aurastclaire.com"
+custom_domain = true
+
+[[routes]]
+pattern = "tt.aurastclaire.com"
+custom_domain = true
+
+[[routes]]
+pattern = "x.aurastclaire.com"
+custom_domain = true
+
+[[routes]]
+pattern = "pin.aurastclaire.com"
+custom_domain = true
