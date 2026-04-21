@@ -13,9 +13,6 @@ declare namespace App {
   interface Locals {
     tenant: import('./lib/db').Tenant;
     sc: string | null;
-    runtime: {
-      cf?: Request['cf'];
-      ctx: ExecutionContext;
-    };
+    cfContext: ExecutionContext;
   }
 }

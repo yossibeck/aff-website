@@ -6,14 +6,14 @@ import { trackClick } from '../../../../lib/tracking';
 export const GET: APIRoute = async (context) => {
   const { slug, productId } = context.params as { slug: string; productId: string };
   const db = env.DB;
-  const { tenant, sc, runtime } = context.locals;
+  const { tenant, sc, cfContext } = context.locals;
 
   const affiliateUrl = await getProductAffiliateUrl(db, productId, tenant.id);
   if (!affiliateUrl) {
     return context.redirect(`/story/${slug}`, 302);
   }
 
-  await trackClick(db, runtime.ctx, {
+  await trackClick(db, cfContext, {
     tenantId: tenant.id,
     productId,
     storySlug: slug,

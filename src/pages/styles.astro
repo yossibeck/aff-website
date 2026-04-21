@@ -4,10 +4,10 @@ import { getStories } from '../lib/db';
 import { trackPageView } from '../lib/tracking';
 import { env } from 'cloudflare:workers';
 
-const { tenant, sc, runtime } = Astro.locals;
+const { tenant, sc, cfContext } = Astro.locals;
 const db = env.DB;
 
-await trackPageView(db, runtime.ctx, { tenantId: tenant.id, sc, request: Astro.request });
+await trackPageView(db, cfContext, { tenantId: tenant.id, sc, request: Astro.request });
 
 const cat = Astro.url.searchParams.get('cat') ?? undefined;
 const stories = await getStories(db, tenant.id, cat);
