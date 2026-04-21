@@ -1,9 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getStory } from '../../lib/db';
+import { trackPageView } from '../../lib/tracking';
 import { env } from 'cloudflare:workers';
 
-const { tenant } = Astro.locals;
+const { tenant, sc, runtime } = Astro.locals;
 const db = env.DB;
 
 const { slug } = Astro.params;
@@ -12,6 +13,8 @@ const story = await getStory(db, tenant.id, slug!);
 if (!story) {
   return Astro.redirect('/', 302);
 }
+
+await trackPageView(db, runtime.ctx, { tenantId: tenant.id, storySlug: slug, sc, request: Astro.request });
 ---
 <Base title={`${tenant.name} — ${story.social_title}`}>
   <style slot="head">

@@ -1,10 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getSiteConfigs, getStories } from '../lib/db';
+import { trackPageView } from '../lib/tracking';
 import { env } from 'cloudflare:workers';
 
-const { tenant } = Astro.locals;
+const { tenant, sc, runtime } = Astro.locals;
 const db = env.DB;
+
+await trackPageView(db, runtime.ctx, { tenantId: tenant.id, sc, request: Astro.request });
 
 const [configs, stories] = await Promise.all([
   getSiteConfigs(db, tenant.id),
@@ -382,12 +385,12 @@ const categoryTextColors: Record<string, string> = {
             cards.forEach(function (c) { c.classList.add('active'); });
           } else {
             cards.forEach(function (card, i) {
-              window.setTimeout(function () { card.classList.add('active'); }, i * 250);
+              window.setTimeout(function () { card.classList.add('active'); }, i * 50);
             });
           }
           obs.unobserve(t);
         });
-      }, { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      }, { root: null, rootMargin: '0px 0px 25% 0px', threshold: 0.01 });
 
       if (collectionEl) obs.observe(collectionEl);
 
