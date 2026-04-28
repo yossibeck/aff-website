@@ -13,7 +13,8 @@
     "astro": "astro",
     "generate-types": "wrangler types",
     "deploy": "astro build && rm -f .wrangler/deploy/config.json && wrangler deploy --config dist/server/wrangler.json",
-    "build-deploy:prod": "npm run deploy"
+    "build-deploy:prod": "npm run deploy",
+    "db:refresh": "wrangler d1 export aff-story-db --remote --output local-dev.sql && rm -rf .wrangler/state/v3/d1 && wrangler d1 execute aff-story-db --local --file=local-dev.sql"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
