@@ -12,7 +12,8 @@
     "test": "vitest",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "build-deploy:prod": "astro build && rm -f .wrangler/deploy/config.json && wrangler deploy --config dist/server/wrangler.json"
+    "deploy": "astro build && rm -f .wrangler/deploy/config.json && wrangler deploy --config dist/server/wrangler.json",
+    "build-deploy:prod": "npm run deploy"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

@@ -1,5 +1,10 @@
 name = "aff-website"
+main = "dist/server/entry.mjs"
 compatibility_date = "2024-09-23"
+
+[assets]
+binding = "ASSETS"
+directory = "dist/client"
 
 [[d1_databases]]
 binding = "DB"
