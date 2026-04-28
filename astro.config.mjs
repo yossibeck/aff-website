@@ -8,7 +8,7 @@ export default defineConfig({
 
   adapter: cloudflare({
     platformProxy: {
-      enabled: true,
+      enabled: !process.env.CI && process.env.NODE_ENV !== 'production',
     },
   }),
 
