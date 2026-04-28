@@ -191,3 +191,77 @@ export async function getProductAffiliateUrl(
     .first<{ affiliate_url: string }>();
   return row?.affiliate_url ?? null;
 }
+
+// ── Users ──────────────────────────────────────────────────────────────────
+
+export interface User {
+  id: number;
+  tenant_id: number;
+  email: string;
+  password_hash: string;
+  pinterest_access_token: string | null;
+  pinterest_refresh_token: string | null;
+  pinterest_board_id: string | null;
+}
+
+export async function getUserByEmail(
+  db: D1Database,
+  email: string,
+  tenantId: number
+): Promise<User | null> {
+  return db
+    .prepare('SELECT * FROM users WHERE email = ? AND tenant_id = ?')
+    .bind(email, tenantId)
+    .first<User>();
+}
+
+export async function getUserById(
+  db: D1Database,
+  id: number,
+  tenantId: number
+): Promise<User | null> {
+  return db
+    .prepare('SELECT * FROM users WHERE id = ? AND tenant_id = ?')
+    .bind(id, tenantId)
+    .first<User>();
+}
+
+export async function createUser(
+  db: D1Database,
+  tenantId: number,
+  email: string,
+  passwordHash: string
+): Promise<number> {
+  const result = await db
+    .prepare('INSERT INTO users (tenant_id, email, password_hash) VALUES (?, ?, ?)')
+    .bind(tenantId, email, passwordHash)
+    .run();
+  return result.meta.last_row_id as number;
+}
+
+export async function updatePinterestTokens(
+  db: D1Database,
+  userId: number,
+  tenantId: number,
+  accessToken: string,
+  refreshToken: string
+): Promise<void> {
+  await db
+    .prepare(
+      'UPDATE users SET pinterest_access_token = ?, pinterest_refresh_token = ? WHERE id = ? AND tenant_id = ?'
+    )
+    .bind(accessToken, refreshToken, userId, tenantId)
+    .run();
+}
+
+export async function updatePinterestBoardId(
+  db: D1Database,
+  userId: number,
+  tenantId: number,
+  boardId: string
+): Promise<void> {
+  await db
+    .prepare('UPDATE users SET pinterest_board_id = ? WHERE id = ? AND tenant_id = ?')
+    .bind(boardId, userId, tenantId)
+    .run();
+}

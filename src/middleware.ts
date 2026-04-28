@@ -2,6 +2,7 @@ import { defineMiddleware } from 'astro:middleware';
 import { env } from 'cloudflare:workers';
 import { getTenant } from './lib/db';
 import { resolveSc } from './lib/tracking';
+import { getSessionFromRequest, verifySession } from './lib/session';
 
 const DEFAULT_TENANT = { id: 1, slug: 'aura', name: 'Aura St. Claire', domain: 'lp.aurastclaire.com' };
 
@@ -39,6 +40,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
     context.locals.tenant = await getTenant(db, hostname);
   } catch {
     context.locals.tenant = DEFAULT_TENANT;
+  }
+
+  // Resolve session cookie → locals.user
+  const sessionToken = getSessionFromRequest(context.request);
+  if (sessionToken && env.SESSION_SECRET) {
+    const payload = await verifySession(sessionToken, env.SESSION_SECRET);
+    context.locals.user = payload ? { id: payload.userId, tenantId: payload.tenantId } : null;
+  } else {
+    context.locals.user = null;
   }
 
   const response = await next();

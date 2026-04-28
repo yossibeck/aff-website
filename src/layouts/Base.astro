@@ -1,14 +1,28 @@
 ---
 import '../styles/global.css';
 import { env } from 'cloudflare:workers';
+import { getUserById } from '../lib/db';
 
 interface Props {
   title?: string;
   dark?: boolean;
 }
 const { title = 'Aura St. Claire', dark = false } = Astro.props;
-const { tenant } = Astro.locals;
+const { tenant, user } = Astro.locals;
 const clarityId = env.CLARITY_ID ?? '';
+
+let authUser: import('../lib/db').User | null = null;
+if (user) {
+  try {
+    authUser = await getUserById(env.DB, user.id, tenant.id);
+  } catch { /* non-critical — auth bar just won't show user details */ }
+}
+
+const emailDisplay = authUser?.email
+  ? authUser.email.length > 22
+    ? authUser.email.slice(0, 20) + '…'
+    : authUser.email
+  : '';
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -91,6 +105,7 @@ const clarityId = env.CLARITY_ID ?? '';
               <a href="/styles?cat=beauty" class="block px-4 py-2 text-left text-sm hover:bg-neutral-100/80" role="menuitem">Beauty</a>
             </div>
           </div>
+
         </nav>
       </div>
     </header>
@@ -100,6 +115,30 @@ const clarityId = env.CLARITY_ID ?? '';
     <footer class={`border-t py-10 text-center text-sm ${dark ? 'border-white/20 text-white/60' : 'border-neutral-200 text-neutral-500'}`}>
       {tenant.name}
     </footer>
+
+    <div class={`border-t py-3 text-center text-xs ${dark ? 'border-white/10 text-white/40' : 'border-neutral-100 text-neutral-400'}`}>
+      {!user ? (
+        <span>
+          <a href="/login" class="hover:underline">Login</a>
+          <span class="mx-2 opacity-40">|</span>
+          <a href="/register" class="hover:underline">Register</a>
+        </span>
+      ) : !authUser?.pinterest_access_token ? (
+        <span>
+          <span class="mr-2 opacity-70" title={authUser?.email}>{emailDisplay}</span>
+          <span class="mx-2 opacity-40">|</span>
+          <a href="/pinterest/connect" class="text-[#e60023] hover:underline">Connect Pinterest</a>
+          <span class="mx-2 opacity-40">|</span>
+          <a href="/logout" class="hover:underline">Logout</a>
+        </span>
+      ) : (
+        <span>
+          <span class="mr-2 opacity-70" title={authUser?.email}>{emailDisplay}</span>
+          <span class="mx-2 opacity-40">|</span>
+          <a href="/logout" class="hover:underline">Logout</a>
+        </span>
+      )}
+    </div>
   </div>
 
   <script>

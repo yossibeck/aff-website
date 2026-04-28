@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import { env } from 'cloudflare:workers';
+import { getUserByEmail, createUser } from '../lib/db';
+import { signSession, sessionSetHeader } from '../lib/session'; // sessionSetHeader used in Response
+import bcrypt from 'bcryptjs';
+
+const { tenant, user } = Astro.locals;
+
+// Already logged in
+if (user) {
+  return Astro.redirect('/', 302);
+}
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const email = (form.get('email') as string | null)?.trim().toLowerCase() ?? '';
+  const password = (form.get('password') as string | null) ?? '';
+  const confirm = (form.get('confirm') as string | null) ?? '';
+
+  if (!email || !password) {
+    error = 'Email and password are required.';
+  } else if (password.length < 8) {
+    error = 'Password must be at least 8 characters.';
+  } else if (password !== confirm) {
+    error = 'Passwords do not match.';
+  } else {
+    const db = env.DB;
+    const existing = await getUserByEmail(db, email, tenant.id);
+    if (existing) {
+      error = 'An account with that email already exists.';
+    } else {
+      try {
+        const hash = await bcrypt.hash(password, 10);
+        const newId = await createUser(db, tenant.id, email, hash);
+        const token = await signSession({ userId: newId, tenantId: tenant.id }, env.SESSION_SECRET);
+        return new Response(null, {
+          status: 302,
+          headers: {
+            Location: '/',
+            'Set-Cookie': sessionSetHeader(token),
+          },
+        });
+      } catch (e) {
+        console.error('[register] POST error:', e);
+        error = 'Something went wrong. Please try again.';
+      }
+    }
+  }
+}
+---
+<Base title={`${tenant.name} — Create account`}>
+  <div class="mx-auto max-w-md px-5 py-20 sm:px-8">
+    <div class="mb-8 text-center">
+      <h1 class="font-serif text-3xl font-normal text-neutral-900">Create account</h1>
+    </div>
+
+    {error && (
+      <p class="mb-6 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+    )}
+
+    <form method="POST" class="space-y-5">
+      <div>
+        <label for="email" class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+        />
+      </div>
+      <div>
+        <label for="password" class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          autocomplete="new-password"
+          minlength="8"
+          class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+        />
+      </div>
+      <div>
+        <label for="confirm" class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500">Confirm password</label>
+        <input
+          id="confirm"
+          name="confirm"
+          type="password"
+          required
+          autocomplete="new-password"
+          class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+        />
+      </div>
+      <button
+        type="submit"
+        class="mt-2 w-full bg-neutral-900 px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-700"
+      >
+        Create account
+      </button>
+    </form>
+
+    <p class="mt-8 text-center text-sm text-neutral-500">
+      Already have an account?{' '}
+      <a href="/login" class="font-medium text-neutral-900 underline underline-offset-2 hover:text-neutral-600">Sign in</a>
+    </p>
+  </div>
+</Base>

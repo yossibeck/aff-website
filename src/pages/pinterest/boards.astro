@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import { env } from 'cloudflare:workers';
+import { getUserById, updatePinterestBoardId } from '../../lib/db';
+
+const { tenant, user } = Astro.locals;
+
+if (!user) {
+  return Astro.redirect('/login?next=/pinterest/boards', 302);
+}
+
+const db = env.DB;
+const userRow = await getUserById(db, user.id, tenant.id);
+
+if (!userRow?.pinterest_access_token) {
+  return Astro.redirect('/pinterest/connect', 302);
+}
+
+let error = '';
+let boards: { id: string; name: string }[] = [];
+
+// Handle board selection POST
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const boardId = (form.get('board_id') as string | null)?.trim() ?? '';
+  if (boardId) {
+    await updatePinterestBoardId(db, user.id, tenant.id, boardId);
+    return Astro.redirect('/', 302);
+  }
+  error = 'Please select a board.';
+}
+
+// Fetch boards from Pinterest
+const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=50', {
+  headers: { Authorization: `Bearer ${userRow.pinterest_access_token}` },
+});
+
+if (boardsRes.status === 401) {
+  // Token invalid — re-authorize
+  return Astro.redirect('/pinterest/connect', 302);
+}
+
+if (boardsRes.ok) {
+  const data = await boardsRes.json<{ items: { id: string; name: string }[] }>();
+  boards = data.items ?? [];
+} else {
+  error = 'Could not fetch your Pinterest boards. Please try again.';
+}
+---
+<Base title={`${tenant.name} — Select a Pinterest board`}>
+  <div class="mx-auto max-w-md px-5 py-20 sm:px-8">
+    <div class="mb-8 text-center">
+      <p class="text-xs font-medium uppercase tracking-[0.3em] text-neutral-400">Pinterest</p>
+      <h1 class="mt-3 font-serif text-3xl font-normal text-neutral-900">Choose a board</h1>
+      <p class="mt-3 text-sm text-neutral-500">Stories you save will be pinned to this board.</p>
+    </div>
+
+    {error && (
+      <p class="mb-6 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+    )}
+
+    {boards.length > 0 ? (
+      <form method="POST" class="space-y-5">
+        <div>
+          <label for="board_id" class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500">Board</label>
+          <select
+            id="board_id"
+            name="board_id"
+            required
+            class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+          >
+            <option value="" disabled selected>Select a board…</option>
+            {boards.map((b) => (
+              <option value={b.id} selected={b.id === userRow.pinterest_board_id}>{b.name}</option>
+            ))}
+          </select>
+        </div>
+        <button
+          type="submit"
+          class="mt-2 w-full bg-neutral-900 px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-700"
+        >
+          Save &amp; continue
+        </button>
+      </form>
+    ) : (
+      !error && (
+        <p class="text-center text-sm text-neutral-500">No boards found on your Pinterest account.</p>
+      )
+    )}
+  </div>
+</Base>
