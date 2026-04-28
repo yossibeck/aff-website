@@ -10,6 +10,15 @@ binding = "DB"
 database_name = "aff-story-db"
 database_id = "b55e548c-cad5-41ae-a89d-e613dd1909bc"
 
+# Main domain
+[[routes]]
+pattern = "aurastclaire.com"
+custom_domain = true
+
+[[routes]]
+pattern = "www.aurastclaire.com"
+custom_domain = true
+
 # Subdomain source tracking — middleware redirects to main domain + ?sc=<platform>
 [[routes]]
 pattern = "ig.aurastclaire.com"

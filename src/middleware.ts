@@ -14,6 +14,13 @@ function getSubdomainSc(hostname: string): { sc: string; mainHost: string } | nu
 export const onRequest = defineMiddleware(async (context, next) => {
   const hostname = (context.request.headers.get('host') ?? 'localhost').split(':')[0];
 
+  // www → apex redirect
+  if (hostname.startsWith('www.')) {
+    const redirectUrl = new URL(context.request.url);
+    redirectUrl.hostname = hostname.slice(4);
+    return Response.redirect(redirectUrl.toString(), 301);
+  }
+
   // Subdomain source tracking: ig.domain.com → domain.com/?sc=ig
   const sub = getSubdomainSc(hostname);
   if (sub) {
