@@ -31,7 +31,7 @@ if (Astro.request.method === 'POST') {
 }
 
 // Fetch boards from Pinterest
-const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=50', {
+const boardsRes = await fetch('https://api-sandbox.pinterest.com/v5/boards?page_size=50', {
   headers: { Authorization: `Bearer ${userRow.pinterest_access_token}` },
 });
 

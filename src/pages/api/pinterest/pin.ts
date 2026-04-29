@@ -3,8 +3,9 @@ import { env } from 'cloudflare:workers';
 import { getUserById, getStory, updatePinterestTokens } from '../../../lib/db';
 
 const SITE_ORIGIN = 'https://aurastclaire.com';
-const PINS_URL = 'https://api.pinterest.com/v5/pins';
-const TOKEN_URL = 'https://api.pinterest.com/v5/oauth/token';
+const API_BASE = 'https://api-sandbox.pinterest.com';
+const PINS_URL = `${API_BASE}/v5/pins`;
+const TOKEN_URL = `${API_BASE}/v5/oauth/token`;
 
 async function refreshTokens(refreshToken: string): Promise<{ access_token: string; refresh_token: string } | null> {
   const basicAuth = btoa(`${env.PINTEREST_APP_ID}:${env.PINTEREST_APP_SECRET}`);
@@ -17,7 +18,7 @@ async function refreshTokens(refreshToken: string): Promise<{ access_token: stri
     body: new URLSearchParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
-      scope: 'pins:write,boards:read',
+      scope: 'pins:read pins:write boards:read boards:write',
     }).toString(),
   });
   if (!res.ok) return null;

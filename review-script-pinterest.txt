@@ -1,0 +1,23 @@
+#### clearing the db: 
+npx wrangler d1 execute aff-story-db --local --command "UPDATE users SET pinterest_access_token=NULL, pinterest_refresh_token=NULL, pinterest_board_id=NULL"
+npx wrangler d1 execute aff-story-db --remote --command "UPDATE users SET pinterest_access_token=NULL, pinterest_refresh_token=NULL, pinterest_board_id=NULL"
+#### clearing the db: 
+
+
+
+Hi, I'm showing how Aura St. Claire integrates with Pinterest.
+
+Aura St. Claire is an AI fashion influencer site where users discover curated style stories and save them to their Pinterest boards.
+
+I'll start by logging in with my email and password — [type credentials] — and now I'm logged in, you can see my email in the footer bar.
+
+Next, I'll connect my Pinterest account. I click 'Connect Pinterest', which takes me to Pinterest's OAuth screen. I grant the app permission to read and write to my boards — [click
+Allow] — and now I'm redirected back to the site to choose a board.
+
+I'll select my 'Aura Styles' board and save it.
+
+Now I'll open a story — [navigate to a story] — and at the bottom of the page there's a 'Save to Pinterest' button. I click it — [click button] — and the story is pinned.
+
+Finally, I'll switch over to Pinterest — [open pinterest.com] — navigate to my 'Aura Styles' board, and there's the pin with the story image and a link back to the article.
+
+That's the full flow — users discover stories on Aura St. Claire and save them directly to their Pinterest boards.

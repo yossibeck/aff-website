@@ -1,9 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 
-const REDIRECT_URI = 'https://aurastclaire.com/pinterest/callback';
-
-export const GET: APIRoute = ({ locals }) => {
+export const GET: APIRoute = ({ locals, request }) => {
   if (!locals.user) {
     return new Response(null, {
       status: 302,
@@ -11,20 +9,25 @@ export const GET: APIRoute = ({ locals }) => {
     });
   }
 
+  const origin = new URL(request.url).origin;
+  const redirectUri = `${origin}/pinterest/callback`;
+  const isHttps = origin.startsWith('https://');
+
   const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id: env.PINTEREST_APP_ID,
-    redirect_uri: REDIRECT_URI,
+    redirect_uri: redirectUri,
     response_type: 'code',
-    scope: 'pins:write,boards:read',
+    scope: 'pins:read pins:write boards:read boards:write',
     state,
   });
 
+  const securePart = isHttps ? '; Secure' : '';
   return new Response(null, {
     status: 302,
     headers: {
       Location: `https://www.pinterest.com/oauth/?${params.toString()}`,
-      'Set-Cookie': `pint_state=${encodeURIComponent(state)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`,
+      'Set-Cookie': `pint_state=${encodeURIComponent(state)}; Path=/; HttpOnly${securePart}; SameSite=Lax; Max-Age=600`,
     },
   });
 };
