@@ -23,6 +23,9 @@ export interface StoryRow {
   intro_text: string;
   sections_json: string;
   curated_title: string;
+  content_type: string;
+  hero_desktop_url: string | null;
+  hero_mobile_url: string | null;
 }
 
 export interface StorySection {
@@ -108,13 +111,13 @@ export async function getStories(
 ): Promise<StoryRow[]> {
   if (category) {
     const result = await db
-      .prepare('SELECT * FROM stories WHERE tenant_id = ? AND category = ? ORDER BY id DESC')
+      .prepare("SELECT * FROM stories WHERE tenant_id = ? AND category = ? AND status = 'published' ORDER BY id DESC")
       .bind(tenantId, category)
       .all<StoryRow>();
     return result.results ?? [];
   }
   const result = await db
-    .prepare('SELECT * FROM stories WHERE tenant_id = ? ORDER BY id DESC')
+    .prepare("SELECT * FROM stories WHERE tenant_id = ? AND status = 'published' ORDER BY id DESC")
     .bind(tenantId)
     .all<StoryRow>();
   return result.results ?? [];
@@ -144,7 +147,7 @@ export async function getStory(
   slug: string
 ): Promise<StoryWithSections | null> {
   const row = await db
-    .prepare('SELECT * FROM stories WHERE tenant_id = ? AND slug = ?')
+    .prepare("SELECT * FROM stories WHERE tenant_id = ? AND slug = ? AND status = 'published'")
     .bind(tenantId, slug)
     .first<StoryRow>();
 
