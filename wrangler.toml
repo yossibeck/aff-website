@@ -36,3 +36,16 @@ custom_domain = true
 [[routes]]
 pattern = "pin.aurastclaire.com"
 custom_domain = true
+
+# ── Staging environment ────────────────────────────────────────────────────────
+[env.staging]
+name = "aff-website-staging"
+
+[env.staging.assets]
+binding = "ASSETS"
+directory = "dist/client"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "aff-story-db-staging"
+database_id = "7ec860f9-0dd4-40a5-83bc-4e2d0faf12d1"

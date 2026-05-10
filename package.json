@@ -14,7 +14,10 @@
     "generate-types": "wrangler types",
     "deploy": "astro build && rm -f .wrangler/deploy/config.json && wrangler deploy --config dist/server/wrangler.json",
     "build-deploy:prod": "npm run deploy",
-    "db:refresh": "wrangler d1 export aff-story-db --remote --output local-dev.sql && rm -rf .wrangler/state/v3/d1 && wrangler d1 execute aff-story-db --local --file=local-dev.sql"
+    "deploy:staging": "./deploy.staging.sh",
+    "deploy:staging:migrate": "./deploy.staging.sh --migrate",
+    "db:refresh": "wrangler d1 export aff-story-db --remote --output local-dev.sql && rm -rf .wrangler/state/v3/d1 && wrangler d1 execute aff-story-db --local --file=local-dev.sql",
+    "db:refresh:staging": "wrangler d1 export aff-story-db --remote --output /tmp/prod-export.sql && wrangler d1 execute aff-story-db-staging --remote --file=/tmp/prod-export.sql"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
