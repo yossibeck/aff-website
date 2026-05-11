@@ -40,6 +40,7 @@ custom_domain = true
 # ── Staging environment ────────────────────────────────────────────────────────
 [env.staging]
 name = "aff-website-staging"
+workers_dev = true
 
 [env.staging.assets]
 binding = "ASSETS"
@@ -49,3 +50,7 @@ directory = "dist/client"
 binding = "DB"
 database_name = "aff-story-db-staging"
 database_id = "7ec860f9-0dd4-40a5-83bc-4e2d0faf12d1"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSION"
+id = "71194cbfcadf4ebea8740695c7ee9dc1"
