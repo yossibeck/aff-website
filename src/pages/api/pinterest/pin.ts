@@ -82,35 +82,73 @@ export const POST: APIRoute = async ({ locals, request }) => {
     return json()({ error: 'No Pinterest board selected', redirect: '/pinterest/boards' }, 403);
   }
 
-  const pinPayload = {
-    board_id: userRow.pinterest_board_id,
-    title: story.social_title,
-    description: story.intro_text ?? '',
-    link: `${SITE_ORIGIN}/story/${slug}`,
-    media_source: {
-      source_type: 'image_url',
-      url: absoluteImageUrl(story.social_img),
-    },
-  };
+  const storyUrl = `${SITE_ORIGIN}/story/${slug}`;
+  const boardId = userRow.pinterest_board_id;
 
+  // Refresh token once if needed — reuse for all pins in this request
   let accessToken = userRow.pinterest_access_token;
-  let pinRes = await createPin(accessToken, pinPayload);
+  async function postPin(payload: object): Promise<Response> {
+    let res = await createPin(accessToken, payload);
+    if (res.status === 401 && userRow!.pinterest_refresh_token) {
+      const refreshed = await refreshTokens(userRow!.pinterest_refresh_token);
+      if (refreshed) {
+        await updatePinterestTokens(db, userId, tenantId, refreshed.access_token, refreshed.refresh_token);
+        accessToken = refreshed.access_token;
+        res = await createPin(accessToken, payload);
+      }
+    }
+    return res;
+  }
 
-  // Token expired — attempt refresh once
-  if (pinRes.status === 401 && userRow.pinterest_refresh_token) {
-    const refreshed = await refreshTokens(userRow.pinterest_refresh_token);
-    if (refreshed) {
-      await updatePinterestTokens(db, userId, tenantId, refreshed.access_token, refreshed.refresh_token);
-      accessToken = refreshed.access_token;
-      pinRes = await createPin(accessToken, pinPayload);
+  // Build pin list: hero pin first, then one pin per section that has a pin image
+  const pins: { imageUrl: string; title: string; description: string }[] = [];
+
+  if (story.social_img) {
+    pins.push({
+      imageUrl: story.social_img,
+      title: story.social_title ?? story.article_title ?? slug,
+      description: story.intro_text ?? '',
+    });
+  }
+
+  for (const section of story.sections) {
+    if (section.section_pin_url) {
+      pins.push({
+        imageUrl: section.section_pin_url,
+        title: section.mini_title ?? story.social_title ?? slug,
+        description: section.story_text?.slice(0, 500) ?? '',
+      });
     }
   }
 
-  if (!pinRes.ok) {
-    const text = await pinRes.text();
-    console.error('Pinterest pin creation failed:', text);
-    return json()({ error: 'Pinterest API error. Please try again.' }, 502);
+  if (pins.length === 0) {
+    return json()({ error: 'No pin images available for this story' }, 422);
   }
 
-  return json()({ success: true });
+  const results: { ok: boolean; title: string }[] = [];
+  for (const pin of pins) {
+    const payload = {
+      board_id: boardId,
+      title: pin.title,
+      description: pin.description,
+      link: storyUrl,
+      media_source: {
+        source_type: 'image_url',
+        url: absoluteImageUrl(pin.imageUrl),
+      },
+    };
+    const res = await postPin(payload);
+    if (!res.ok) {
+      const text = await res.text();
+      console.error(`Pinterest pin failed [${pin.title}]:`, text);
+    }
+    results.push({ ok: res.ok, title: pin.title });
+  }
+
+  const failed = results.filter(r => !r.ok);
+  if (failed.length === results.length) {
+    return json()({ error: 'All pins failed. Please try again.' }, 502);
+  }
+
+  return json()({ success: true, pinned: results.length - failed.length, failed: failed.length });
 };

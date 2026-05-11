@@ -7,6 +7,13 @@ import { env } from 'cloudflare:workers';
 const { tenant, sc, cfContext, user } = Astro.locals;
 const db = env.DB;
 
+function parseInlineLinks(text: string, storySlug: string): string {
+  return text.replace(/\[([^\]]+)\]\(product:([^)]+)\)/g, (_match, anchor, productId) => {
+    const href = `/story/${storySlug}/click/${productId}`;
+    return `<a href="${href}" class="underline text-neutral-900 hover:text-neutral-600">${anchor}</a>`;
+  });
+}
+
 const { slug } = Astro.params;
 const story = await getStory(db, tenant.id, slug!);
 
@@ -31,25 +38,30 @@ if (user) {
 }
 ---
 {story.content_type === 'article' ? (
-<Base title={`${tenant.name} — ${story.social_title}`}>
+<Base title={`${tenant.name} — ${story.article_title ?? story.social_title}`}>
+  {story.social_hook && (
+    <meta slot="head" name="description" content={story.social_hook} />
+  )}
+
   <div class="w-full overflow-hidden bg-neutral-100" style="height: clamp(14rem, 30vw, 18rem);">
-    <picture>
-      <source media="(min-width: 768px)" srcset={story.hero_desktop_url ?? ''} />
-      <img
-        src={story.hero_mobile_url ?? ''}
-        alt=""
-        class="h-full w-full object-cover"
-        width="1200"
-        height="630"
-        decoding="async"
-      />
-    </picture>
+    <img
+      src={story.hero_desktop_url ?? story.hero_mobile_url ?? ''}
+      alt=""
+      class="h-full w-full object-cover"
+      width="1200"
+      height="630"
+      decoding="async"
+    />
   </div>
 
   <main class="mx-auto max-w-2xl px-5 pb-20 pt-10 sm:px-8 lg:px-10">
     <h1 class="font-serif text-3xl font-normal leading-snug text-neutral-900 sm:text-4xl">
-      {story.social_title}
+      {story.article_title ?? story.social_title}
     </h1>
+
+    {story.article_deck && (
+      <p class="mt-4 text-xl leading-relaxed text-neutral-500">{story.article_deck}</p>
+    )}
 
     <div class="mt-8 space-y-5">
       {story.intro_text.split('\n\n').map((para) => (
@@ -60,42 +72,74 @@ if (user) {
     <div class="mt-16 space-y-20">
       {story.sections.map((section) => (
         <article class="border-b border-neutral-200 pb-20 last:border-0 last:pb-0">
+          {section.mini_title && (
+            <h2 class="mb-5 font-serif text-xl font-normal text-neutral-900">{section.mini_title}</h2>
+          )}
           <div class="space-y-5">
             {section.story_text.split('\n\n').map((para) => (
-              <p class="text-lg leading-relaxed text-neutral-700">{para}</p>
+              <p class="text-lg leading-relaxed text-neutral-700" set:html={parseInlineLinks(para, slug!)} />
             ))}
           </div>
-          <a
-            href={`/story/${slug}/click/${section.product_id}${sc ? `?sc=${encodeURIComponent(sc)}` : ''}`}
-            class="mt-10 block overflow-hidden bg-neutral-50"
-            tabindex="-1"
-            aria-hidden="true"
-          >
+          {section.section_web_url && (
             <img
-              src={section.display_image}
-              alt={section.product_title}
-              class="h-auto w-full object-cover"
-              width="900"
-              height="1200"
+              src={section.section_web_url}
+              alt=""
+              class="mt-8 h-auto w-full object-cover"
               decoding="async"
             />
-          </a>
-          {section.product_title && (
-            <p class="mt-6 text-[10px] font-medium uppercase tracking-[0.3em] text-neutral-400">
-              {section.product_title}
-            </p>
           )}
-          <a
-            href={`/story/${slug}/click/${section.product_id}${sc ? `?sc=${encodeURIComponent(sc)}` : ''}`}
-            class="mt-3 inline-flex min-h-[52px] w-full items-center justify-center bg-neutral-900 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-800 sm:w-auto"
-          >
-            Shop
-          </a>
         </article>
       ))}
     </div>
 
-    <!-- Pinterest: coming soon -->
+    {story.zero_cost_insight && (
+      <div class="mt-16 border-l-4 border-neutral-300 bg-neutral-50 px-6 py-5">
+        <p class="mb-2 text-[10px] font-medium uppercase tracking-[0.3em] text-neutral-500">Try this</p>
+        <p class="text-base italic leading-relaxed text-neutral-700">{story.zero_cost_insight}</p>
+      </div>
+    )}
+
+    <!-- Pinterest section -->
+    <section class="mt-16 border-t border-neutral-200 pt-12 text-center">
+      <p class="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-neutral-400">Share this story</p>
+      {pinState === 'guest' && (
+        <a
+          href={`/login?next=/story/${slug}`}
+          class="inline-flex min-h-[52px] items-center justify-center gap-2.5 bg-[#e60023] px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#c0001d]"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          Sign in to Save
+        </a>
+      )}
+      {pinState === 'no_pinterest' && (
+        <a
+          href="/pinterest/connect"
+          class="inline-flex min-h-[52px] items-center justify-center gap-2.5 bg-[#e60023] px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#c0001d]"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          Connect Pinterest
+        </a>
+      )}
+      {pinState === 'no_board' && (
+        <a
+          href="/pinterest/boards"
+          class="inline-flex min-h-[52px] items-center justify-center gap-2.5 bg-[#e60023] px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#c0001d]"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          Choose a Board
+        </a>
+      )}
+      {pinState === 'ready' && (
+        <button
+          id="pin-btn"
+          data-slug={slug}
+          class="inline-flex min-h-[52px] items-center justify-center gap-2.5 bg-[#e60023] px-8 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#c0001d] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          <span id="pin-btn-label">Save to Pinterest</span>
+        </button>
+      )}
+    </section>
   </main>
 </Base>
 ) : (

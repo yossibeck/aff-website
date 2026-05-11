@@ -26,12 +26,19 @@ export interface StoryRow {
   content_type: string;
   hero_desktop_url: string | null;
   hero_mobile_url: string | null;
+  zero_cost_insight: string | null;
+  social_hook: string | null;
+  article_title: string | null;
+  article_deck: string | null;
 }
 
 export interface StorySection {
   product_id: string;
   story_text: string;
   display_image: string;
+  mini_title?: string;
+  section_web_url?: string;
+  section_pin_url?: string;
 }
 
 export interface Product {
@@ -47,6 +54,9 @@ export interface ResolvedSection {
   display_image: string;
   affiliate_url: string;
   product_title: string;
+  mini_title?: string;
+  section_web_url?: string;
+  section_pin_url?: string;
 }
 
 export interface StoryWithSections extends Omit<StoryRow, 'sections_json'> {
