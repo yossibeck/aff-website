@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { getCookieValue } from '../../lib/session';
-import { updatePinterestTokens } from '../../lib/db';
+import { updatePinterestTokens, updateTenantPinterestTokens } from '../../lib/db';
 
 const API_BASE = 'https://api.pinterest.com';
 const TOKEN_URL = `${API_BASE}/v5/oauth/token`;
@@ -81,7 +81,10 @@ export const GET: APIRoute = async ({ locals, request }) => {
 
   const tokens = await tokenRes.json<{ access_token: string; refresh_token: string }>();
   const db = env.DB;
-  await updatePinterestTokens(db, locals.user.id, locals.user.tenantId, tokens.access_token, tokens.refresh_token);
+  await Promise.all([
+    updatePinterestTokens(db, locals.user.id, locals.user.tenantId, tokens.access_token, tokens.refresh_token),
+    updateTenantPinterestTokens(db, locals.user.tenantId, tokens.access_token, tokens.refresh_token),
+  ]);
 
   return new Response(null, {
     status: 302,
