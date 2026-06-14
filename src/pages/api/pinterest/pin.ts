@@ -3,7 +3,7 @@ import { env } from 'cloudflare:workers';
 import { getUserById, getStory, updatePinterestTokens } from '../../../lib/db';
 
 const SITE_ORIGIN = 'https://aurastclaire.com';
-const API_BASE = 'https://api-sandbox.pinterest.com';
+const API_BASE = 'https://api.pinterest.com';
 const PINS_URL = `${API_BASE}/v5/pins`;
 const TOKEN_URL = `${API_BASE}/v5/oauth/token`;
 

@@ -3,7 +3,7 @@ import { env } from 'cloudflare:workers';
 import { getCookieValue } from '../../lib/session';
 import { updatePinterestTokens } from '../../lib/db';
 
-const API_BASE = 'https://api-sandbox.pinterest.com';
+const API_BASE = 'https://api.pinterest.com';
 const TOKEN_URL = `${API_BASE}/v5/oauth/token`;
 
 export const GET: APIRoute = async ({ locals, request }) => {
