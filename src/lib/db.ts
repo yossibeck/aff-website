@@ -278,3 +278,79 @@ export async function updatePinterestBoardId(
     .bind(boardId, userId, tenantId)
     .run();
 }
+
+// ── Tenant Pinterest ────────────────────────────────────────────────────────
+
+export interface TenantPinterest {
+  id: number;
+  pinterest_access_token: string | null;
+  pinterest_refresh_token: string | null;
+}
+
+export async function getTenantPinterest(
+  db: D1Database,
+  tenantId: number
+): Promise<TenantPinterest | null> {
+  return db
+    .prepare('SELECT id, pinterest_access_token, pinterest_refresh_token FROM tenants WHERE id = ?')
+    .bind(tenantId)
+    .first<TenantPinterest>();
+}
+
+export async function updateTenantPinterestTokens(
+  db: D1Database,
+  tenantId: number,
+  accessToken: string,
+  refreshToken: string
+): Promise<void> {
+  await db
+    .prepare(
+      'UPDATE tenants SET pinterest_access_token = ?, pinterest_refresh_token = ? WHERE id = ?'
+    )
+    .bind(accessToken, refreshToken, tenantId)
+    .run();
+}
+
+export interface PinterestNiche {
+  category: string;
+  network_category_name: string;
+  board_id: string | null;
+}
+
+export async function getTenantPinterestNiches(
+  db: D1Database,
+  tenantId: number
+): Promise<PinterestNiche[]> {
+  const result = await db
+    .prepare(
+      "SELECT category, network_category_name, social_extra FROM category_network_mapping WHERE tenant_id = ? AND social_network = 'pinterest' ORDER BY category"
+    )
+    .bind(tenantId)
+    .all<{ category: string; network_category_name: string; social_extra: string | null }>();
+
+  return (result.results ?? []).map((row) => {
+    let board_id: string | null = null;
+    if (row.social_extra) {
+      try {
+        board_id = JSON.parse(row.social_extra).board_id ?? null;
+      } catch {
+        // malformed JSON — treat as unmapped
+      }
+    }
+    return { category: row.category, network_category_name: row.network_category_name, board_id };
+  });
+}
+
+export async function updateTenantPinterestBoardMapping(
+  db: D1Database,
+  tenantId: number,
+  category: string,
+  boardId: string
+): Promise<void> {
+  await db
+    .prepare(
+      "UPDATE category_network_mapping SET social_extra = json_set(COALESCE(social_extra, '{}'), '$.board_id', ?) WHERE tenant_id = ? AND category = ? AND social_network = 'pinterest'"
+    )
+    .bind(boardId, tenantId, category)
+    .run();
+}
