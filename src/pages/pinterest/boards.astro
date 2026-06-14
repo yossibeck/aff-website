@@ -1,7 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { env } from 'cloudflare:workers';
-import { getUserById, updatePinterestBoardId } from '../../lib/db';
+import {
+  getTenantPinterest,
+  getTenantPinterestNiches,
+  updateTenantPinterestBoardMapping,
+} from '../../lib/db';
 
 const { tenant, user } = Astro.locals;
 
@@ -10,33 +14,41 @@ if (!user) {
 }
 
 const db = env.DB;
-const userRow = await getUserById(db, user.id, tenant.id);
+const tenantPinterest = await getTenantPinterest(db, tenant.id);
 
-if (!userRow?.pinterest_access_token) {
+if (!tenantPinterest?.pinterest_access_token) {
   return Astro.redirect('/pinterest/connect', 302);
 }
 
 let error = '';
+let saved = false;
 let boards: { id: string; name: string }[] = [];
 
-// Handle board selection POST
+// Handle board mapping POST
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
-  const boardId = (form.get('board_id') as string | null)?.trim() ?? '';
-  if (boardId) {
-    await updatePinterestBoardId(db, user.id, tenant.id, boardId);
-    return Astro.redirect('/', 302);
+  const niches = await getTenantPinterestNiches(db, tenant.id);
+  let anyMapped = false;
+  for (const niche of niches) {
+    const boardId = (form.get(`board_${niche.category}`) as string | null)?.trim() ?? '';
+    if (boardId) {
+      await updateTenantPinterestBoardMapping(db, tenant.id, niche.category, boardId);
+      anyMapped = true;
+    }
   }
-  error = 'Please select a board.';
+  if (anyMapped) {
+    saved = true;
+  } else {
+    error = 'Please select at least one board.';
+  }
 }
 
-// Fetch boards from Pinterest
-const boardsRes = await fetch('https://api-sandbox.pinterest.com/v5/boards?page_size=50', {
-  headers: { Authorization: `Bearer ${userRow.pinterest_access_token}` },
+// Fetch boards from Pinterest using tenant token
+const boardsRes = await fetch('https://api.pinterest.com/v5/boards?page_size=50', {
+  headers: { Authorization: `Bearer ${tenantPinterest.pinterest_access_token}` },
 });
 
 if (boardsRes.status === 401) {
-  // Token invalid — re-authorize
   return Astro.redirect('/pinterest/connect', 302);
 }
 
@@ -46,46 +58,63 @@ if (boardsRes.ok) {
 } else {
   error = 'Could not fetch your Pinterest boards. Please try again.';
 }
+
+// Load current niche mappings to pre-select
+const niches = await getTenantPinterestNiches(db, tenant.id);
 ---
-<Base title={`${tenant.name} — Select a Pinterest board`}>
-  <div class="mx-auto max-w-md px-5 py-20 sm:px-8">
+<Base title={`${tenant.name} — Pinterest board mapping`}>
+  <div class="mx-auto max-w-lg px-5 py-20 sm:px-8">
     <div class="mb-8 text-center">
       <p class="text-xs font-medium uppercase tracking-[0.3em] text-neutral-400">Pinterest</p>
-      <h1 class="mt-3 font-serif text-3xl font-normal text-neutral-900">Choose a board</h1>
-      <p class="mt-3 text-sm text-neutral-500">Stories you save will be pinned to this board.</p>
+      <h1 class="mt-3 font-serif text-3xl font-normal text-neutral-900">Connect boards to niches</h1>
+      <p class="mt-3 text-sm text-neutral-500">Choose which Pinterest board to post to for each content niche.</p>
     </div>
+
+    {saved && (
+      <p class="mb-6 rounded-md bg-green-50 px-4 py-3 text-sm text-green-700">Board mappings saved.</p>
+    )}
 
     {error && (
       <p class="mb-6 rounded-md bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
     )}
 
-    {boards.length > 0 ? (
-      <form method="POST" class="space-y-5">
-        <div>
-          <label for="board_id" class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500">Board</label>
-          <select
-            id="board_id"
-            name="board_id"
-            required
-            class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
-          >
-            <option value="" disabled selected>Select a board…</option>
-            {boards.map((b) => (
-              <option value={b.id} selected={b.id === userRow.pinterest_board_id}>{b.name}</option>
-            ))}
-          </select>
-        </div>
+    {niches.length === 0 && (
+      <p class="text-center text-sm text-neutral-500">No Pinterest niches configured for this tenant.</p>
+    )}
+
+    {niches.length > 0 && boards.length === 0 && !error && (
+      <p class="text-center text-sm text-neutral-500">No boards found on your Pinterest account.</p>
+    )}
+
+    {niches.length > 0 && boards.length > 0 && (
+      <form method="POST" class="space-y-6">
+        {niches.map((niche) => (
+          <div>
+            <label
+              for={`board_${niche.category}`}
+              class="mb-1.5 block text-xs font-medium uppercase tracking-[0.15em] text-neutral-500"
+            >
+              {niche.network_category_name || niche.category}
+            </label>
+            <select
+              id={`board_${niche.category}`}
+              name={`board_${niche.category}`}
+              class="w-full border border-neutral-300 bg-white px-4 py-3 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:ring-1 focus:ring-neutral-900"
+            >
+              <option value="">— select a board —</option>
+              {boards.map((b) => (
+                <option value={b.id} selected={b.id === niche.board_id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+        ))}
         <button
           type="submit"
           class="mt-2 w-full bg-neutral-900 px-8 py-3.5 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-neutral-700"
         >
-          Save &amp; continue
+          Save mappings
         </button>
       </form>
-    ) : (
-      !error && (
-        <p class="text-center text-sm text-neutral-500">No boards found on your Pinterest account.</p>
-      )
     )}
   </div>
 </Base>
