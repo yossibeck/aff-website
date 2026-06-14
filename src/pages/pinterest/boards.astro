@@ -24,10 +24,12 @@ let error = '';
 let saved = false;
 let boards: { id: string; name: string }[] = [];
 
+// Load niches once — used in POST block and render
+const niches = await getTenantPinterestNiches(db, tenant.id);
+
 // Handle board mapping POST
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
-  const niches = await getTenantPinterestNiches(db, tenant.id);
   let anyMapped = false;
   for (const niche of niches) {
     const boardId = (form.get(`board_${niche.category}`) as string | null)?.trim() ?? '';
@@ -58,9 +60,6 @@ if (boardsRes.ok) {
 } else {
   error = 'Could not fetch your Pinterest boards. Please try again.';
 }
-
-// Load current niche mappings to pre-select
-const niches = await getTenantPinterestNiches(db, tenant.id);
 ---
 <Base title={`${tenant.name} — Pinterest board mapping`}>
   <div class="mx-auto max-w-lg px-5 py-20 sm:px-8">
