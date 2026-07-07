@@ -57,7 +57,6 @@ export async function trackPageView(
 
 export async function trackClick(
   db: D1Database,
-  ctx: ExecutionContext,
   opts: {
     tenantId: number;
     productId: string;
@@ -65,20 +64,22 @@ export async function trackClick(
     sc: string | null;
     request: Request;
   }
-): Promise<void> {
+): Promise<number | null> {
   const ipHash = await hashIp(
     opts.request.headers.get('cf-connecting-ip') ??
     opts.request.headers.get('x-forwarded-for') ??
     ''
   );
   const ua = (opts.request.headers.get('user-agent') ?? '').slice(0, 200);
-  ctx.waitUntil(
-    db
+  try {
+    const result = await db
       .prepare(
         'INSERT INTO click_log (product_id, story_slug, sc, ip_hash, ua, tenant_id) VALUES (?, ?, ?, ?, ?, ?)'
       )
       .bind(opts.productId, opts.storySlug, opts.sc, ipHash, ua, opts.tenantId)
-      .run()
-      .catch(() => {})
-  );
+      .run();
+    return (result.meta.last_row_id as number) ?? null;
+  } catch {
+    return null;
+  }
 }
