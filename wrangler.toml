@@ -37,6 +37,16 @@ custom_domain = true
 pattern = "pin.aurastclaire.com"
 custom_domain = true
 
+# Pets tenant
+[[routes]]
+pattern = "pets.vgpsoftware.com"
+custom_domain = true
+
+# Baking Science tenant
+[[routes]]
+pattern = "bakingscience.vgpsoftware.com"
+custom_domain = true
+
 # ── Staging environment ────────────────────────────────────────────────────────
 [env.staging]
 name = "aff-website-staging"

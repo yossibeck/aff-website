@@ -6,6 +6,25 @@ import { getSessionFromRequest, verifySession } from './lib/session';
 
 const DEFAULT_TENANT = { id: 1, slug: 'aura', name: 'Aura St. Claire', domain: 'lp.aurastclaire.com' };
 
+// Paths probed by WordPress scanners and other bots — return 404 immediately.
+const BLOCKED_PATH_PATTERNS = [
+  '/wp-includes/',
+  '/wp-content/',
+  '/wp-admin/',
+  '/xmlrpc.php',
+  '/wp-login.php',
+  '/wp-cron.php',
+  '/wp-config.php',
+  '/.env',
+  '/.git/',
+  '/feed/',
+];
+
+function isBlockedPath(pathname: string): boolean {
+  const lower = pathname.toLowerCase();
+  return BLOCKED_PATH_PATTERNS.some((p) => lower.includes(p));
+}
+
 function getSubdomainSc(hostname: string): { sc: string; mainHost: string } | null {
   const match = hostname.match(/^(ig|tt|x|pin)\.(.+)$/);
   if (!match) return null;
@@ -14,6 +33,12 @@ function getSubdomainSc(hostname: string): { sc: string; mainHost: string } | nu
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const hostname = (context.request.headers.get('host') ?? 'localhost').split(':')[0];
+  const pathname = new URL(context.request.url).pathname;
+
+  // Block WordPress/CMS scanners and common bot probes immediately.
+  if (isBlockedPath(pathname)) {
+    return new Response(null, { status: 404 });
+  }
 
   // www → apex redirect
   if (hostname.startsWith('www.')) {

@@ -3,6 +3,8 @@ import { env } from 'cloudflare:workers';
 import { getProductAffiliateUrl } from '../../../../lib/db';
 import { trackClick } from '../../../../lib/tracking';
 
+const BOT_UA_RE = /claudebot|jscrawler|bot|crawler|spider|scrapy|python-requests|iPhone OS 13_2_3/i;
+
 export const GET: APIRoute = async (context) => {
   const { slug, productId } = context.params as { slug: string; productId: string };
   const db = env.DB;
@@ -13,7 +15,10 @@ export const GET: APIRoute = async (context) => {
     return context.redirect(`/story/${slug}`, 302);
   }
 
-  const clickId = await trackClick(db, {
+  const ua = context.request.headers.get('user-agent') ?? '';
+  const isBot = BOT_UA_RE.test(ua);
+
+  const clickId = isBot ? null : await trackClick(db, {
     tenantId: tenant.id,
     productId,
     storySlug: slug,
