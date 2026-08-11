@@ -256,8 +256,8 @@ export async function updatePinterestTokens(
   db: D1Database,
   userId: number,
   tenantId: number,
-  accessToken: string,
-  refreshToken: string
+  accessToken: string | null,
+  refreshToken: string | null
 ): Promise<void> {
   await db
     .prepare(
@@ -300,8 +300,8 @@ export async function getTenantPinterest(
 export async function updateTenantPinterestTokens(
   db: D1Database,
   tenantId: number,
-  accessToken: string,
-  refreshToken: string
+  accessToken: string | null,
+  refreshToken: string | null
 ): Promise<void> {
   await db
     .prepare(

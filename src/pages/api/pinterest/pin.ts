@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { getUserById, getStory, updatePinterestTokens } from '../../../lib/db';
+import { getUserById, getStory, updatePinterestTokens, updateTenantPinterestTokens } from '../../../lib/db';
 
 const SITE_ORIGIN = 'https://aurastclaire.com';
 const API_BASE = 'https://api.pinterest.com';
@@ -18,10 +18,13 @@ async function refreshTokens(refreshToken: string): Promise<{ access_token: stri
     body: new URLSearchParams({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
-      scope: 'pins:read pins:write boards:read boards:write',
     }).toString(),
   });
-  if (!res.ok) return null;
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('Pinterest token refresh failed:', res.status, text);
+    return null;
+  }
   return res.json();
 }
 
@@ -87,16 +90,21 @@ export const POST: APIRoute = async ({ locals, request }) => {
 
   // Refresh token once if needed — reuse for all pins in this request
   let accessToken = userRow.pinterest_access_token;
+  let authFailed = false;
   async function postPin(payload: object): Promise<Response> {
     let res = await createPin(accessToken, payload);
     if (res.status === 401 && userRow!.pinterest_refresh_token) {
       const refreshed = await refreshTokens(userRow!.pinterest_refresh_token);
       if (refreshed) {
-        await updatePinterestTokens(db, userId, tenantId, refreshed.access_token, refreshed.refresh_token);
+        await Promise.all([
+          updatePinterestTokens(db, userId, tenantId, refreshed.access_token, refreshed.refresh_token),
+          updateTenantPinterestTokens(db, tenantId, refreshed.access_token, refreshed.refresh_token),
+        ]);
         accessToken = refreshed.access_token;
         res = await createPin(accessToken, payload);
       }
     }
+    if (res.status === 401) authFailed = true;
     return res;
   }
 
@@ -143,6 +151,15 @@ export const POST: APIRoute = async ({ locals, request }) => {
       console.error(`Pinterest pin failed [${pin.title}]:`, text);
     }
     results.push({ ok: res.ok, title: pin.title });
+    if (authFailed) break;
+  }
+
+  if (authFailed) {
+    await Promise.all([
+      updatePinterestTokens(db, userId, tenantId, null, null),
+      updateTenantPinterestTokens(db, tenantId, null, null),
+    ]);
+    return json()({ error: 'Pinterest session expired. Please reconnect.', redirect: '/pinterest/connect' }, 403);
   }
 
   const failed = results.filter(r => !r.ok);
