@@ -3,6 +3,7 @@ import { env } from 'cloudflare:workers';
 import { getTenant } from './lib/db';
 import { resolveSc } from './lib/tracking';
 import { getSessionFromRequest, verifySession } from './lib/session';
+import { getSubdomainSc, isAllowedSubdomainPath } from './lib/subdomain-routing';
 
 const DEFAULT_TENANT = { id: 1, slug: 'aura', name: 'Aura St. Claire', domain: 'lp.aurastclaire.com' };
 
@@ -25,12 +26,6 @@ function isBlockedPath(pathname: string): boolean {
   return BLOCKED_PATH_PATTERNS.some((p) => lower.includes(p));
 }
 
-function getSubdomainSc(hostname: string): { sc: string; mainHost: string } | null {
-  const match = hostname.match(/^(ig|tt|x|pin)\.(.+)$/);
-  if (!match) return null;
-  return { sc: match[1], mainHost: match[2] };
-}
-
 export const onRequest = defineMiddleware(async (context, next) => {
   const hostname = (context.request.headers.get('host') ?? 'localhost').split(':')[0];
   const pathname = new URL(context.request.url).pathname;
@@ -50,6 +45,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Subdomain source tracking: ig.domain.com → domain.com/?sc=ig
   const sub = getSubdomainSc(hostname);
   if (sub) {
+    if (!isAllowedSubdomainPath(pathname)) {
+      return new Response(null, { status: 404 });
+    }
     const redirectUrl = new URL(context.request.url);
     redirectUrl.hostname = sub.mainHost;
     redirectUrl.searchParams.set('sc', sub.sc);
