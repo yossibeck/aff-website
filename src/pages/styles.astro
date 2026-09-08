@@ -1,8 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getStories } from '../lib/db';
+import { getStoriesPage } from '../lib/db';
 import { trackPageView } from '../lib/tracking';
 import { env } from 'cloudflare:workers';
+
+const PAGE_SIZE = 30;
 
 const { tenant, sc, cfContext } = Astro.locals;
 const db = env.DB;
@@ -10,7 +12,11 @@ const db = env.DB;
 await trackPageView(db, cfContext, { tenantId: tenant.id, sc, request: Astro.request });
 
 const cat = Astro.url.searchParams.get('cat') ?? undefined;
-const stories = await getStories(db, tenant.id, cat);
+const { stories, hasMore } = await getStoriesPage(db, tenant.id, {
+  category: cat,
+  limit: PAGE_SIZE,
+  offset: 0,
+});
 
 const activeFilter = cat ?? 'all';
 const filterLabels = ['all', 'wellness', 'street', 'beauty'];
@@ -76,7 +82,13 @@ const filterLabels = ['all', 'wellness', 'street', 'beauty'];
     {stories.length === 0 ? (
       <p class="mt-16 text-center text-white/60">No stories yet in this category.</p>
     ) : (
-      <div class="mx-auto mt-10 grid max-w-7xl grid-cols-2 gap-2 lg:mt-12 lg:grid-cols-5" id="archive-grid">
+      <div
+        class="mx-auto mt-10 grid max-w-7xl grid-cols-2 gap-2 lg:mt-12 lg:grid-cols-5"
+        id="archive-grid"
+        data-cat={cat ?? ''}
+        data-offset={stories.length}
+        data-has-more={hasMore ? '1' : '0'}
+      >
         {stories.map((story) => (
           <div class="archive-grid__item min-w-0">
             <a
@@ -105,5 +117,98 @@ const filterLabels = ['all', 'wellness', 'street', 'beauty'];
         ))}
       </div>
     )}
+
+    <div id="archive-sentinel" class="h-1 w-full"></div>
+    <p id="archive-loading" class="mt-8 hidden text-center text-xs uppercase tracking-widest text-white/60">
+      Loading…
+    </p>
   </main>
 </Base>
+
+<script>
+  (function () {
+    const gridEl = document.getElementById('archive-grid');
+    const sentinelEl = document.getElementById('archive-sentinel');
+    const loadingEl = document.getElementById('archive-loading');
+    if (!gridEl || !sentinelEl) return;
+    const grid: HTMLElement = gridEl;
+    const sentinel: HTMLElement = sentinelEl;
+
+    let offset = parseInt(grid.dataset.offset || '0', 10);
+    let hasMore = grid.dataset.hasMore === '1';
+    let loading = false;
+    const cat = grid.dataset.cat || '';
+
+    interface StoryCard {
+      slug: string;
+      category: string;
+      social_img: string;
+      social_title: string;
+    }
+    interface StoriesResponse {
+      stories: StoryCard[];
+      hasMore: boolean;
+    }
+
+    function escapeHtml(s: string): string {
+      return s.replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string)
+      );
+    }
+
+    function renderTile(story: StoryCard) {
+      const div = document.createElement('div');
+      div.className = 'archive-grid__item min-w-0';
+      div.innerHTML = `
+        <a href="/story/${encodeURIComponent(story.slug)}"
+           class="archive-tile relative block overflow-hidden rounded-sm bg-neutral-900 no-underline"
+           data-category="${escapeHtml(story.category)}"
+           aria-label="${escapeHtml(story.social_title)} — open story">
+          <div class="relative aspect-[9/16] w-full">
+            <img src="${escapeHtml(story.social_img)}" alt="" class="h-full w-full object-cover"
+                 width="600" height="1067" decoding="async" loading="lazy" />
+            <div class="gallery-item__overlay pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black/65 via-black/20 to-transparent px-2 pb-2 pt-12">
+              <span class="font-serif text-xs font-semibold leading-tight text-white sm:text-sm">${escapeHtml(story.social_title)}</span>
+            </div>
+          </div>
+        </a>`;
+      return div;
+    }
+
+    async function loadMore() {
+      if (loading || !hasMore) return;
+      loading = true;
+      loadingEl?.classList.remove('hidden');
+      try {
+        const params = new URLSearchParams({ offset: String(offset) });
+        if (cat) params.set('cat', cat);
+        const res = await fetch(`/api/stories?${params.toString()}`);
+        if (!res.ok) throw new Error(`status ${res.status}`);
+        const data = (await res.json()) as StoriesResponse;
+        for (const story of data.stories || []) {
+          grid.appendChild(renderTile(story));
+        }
+        offset += (data.stories || []).length;
+        hasMore = !!data.hasMore;
+      } catch (err) {
+        console.error('[styles] failed to load more stories', err);
+        hasMore = false; // stop retrying on error
+      } finally {
+        loading = false;
+        loadingEl?.classList.add('hidden');
+        if (!hasMore) observer.disconnect();
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadMore();
+      },
+      { rootMargin: '600px 0px' }
+    );
+
+    if (hasMore) {
+      observer.observe(sentinel);
+    }
+  })();
+</script>

@@ -133,6 +133,41 @@ export async function getStories(
   return result.results ?? [];
 }
 
+export interface StoryCard {
+  slug: string;
+  category: string;
+  social_img: string;
+  social_title: string;
+}
+
+// Paginated, column-trimmed version of getStories for the /styles archive
+// grid — that page only ever renders these 4 fields per card, and the
+// catalog has no natural cap, so it must not fetch every published story
+// (or every column) on every page view.
+export async function getStoriesPage(
+  db: D1Database,
+  tenantId: number,
+  opts: { category?: string; limit: number; offset: number }
+): Promise<{ stories: StoryCard[]; hasMore: boolean }> {
+  const { category, limit, offset } = opts;
+  const query = category
+    ? db
+        .prepare(
+          "SELECT slug, category, social_img, social_title FROM stories WHERE tenant_id = ? AND category = ? AND status = 'published' ORDER BY id DESC LIMIT ? OFFSET ?"
+        )
+        .bind(tenantId, category, limit + 1, offset)
+    : db
+        .prepare(
+          "SELECT slug, category, social_img, social_title FROM stories WHERE tenant_id = ? AND status = 'published' ORDER BY id DESC LIMIT ? OFFSET ?"
+        )
+        .bind(tenantId, limit + 1, offset);
+
+  const result = await query.all<StoryCard>();
+  const rows = result.results ?? [];
+  const hasMore = rows.length > limit;
+  return { stories: hasMore ? rows.slice(0, limit) : rows, hasMore };
+}
+
 export async function getStorySlugByProductId(
   db: D1Database,
   tenantId: number,

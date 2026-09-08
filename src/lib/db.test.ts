@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { parseSections, mergeSectionsWithProducts, getStorySlugByProductId, getProductAffiliateUrl } from './db';
+import {
+  parseSections,
+  mergeSectionsWithProducts,
+  getStorySlugByProductId,
+  getProductAffiliateUrl,
+  getStoriesPage,
+} from './db';
 
 describe('parseSections', () => {
   it('parses valid sections_json', () => {
@@ -89,6 +95,63 @@ describe('getProductAffiliateUrl', () => {
     } as unknown as D1Database;
     const result = await getProductAffiliateUrl(mockDb, 'missing', 1);
     expect(result).toBeNull();
+  });
+});
+
+function _mockDbReturning(rows: unknown[]) {
+  const calls: { sql: string; args: unknown[] }[] = [];
+  const mockDb = {
+    prepare: (sql: string) => ({
+      bind: (...args: unknown[]) => {
+        calls.push({ sql, args });
+        return { all: async () => ({ results: rows }) };
+      },
+    }),
+  } as unknown as D1Database;
+  return { mockDb, calls };
+}
+
+describe('getStoriesPage', () => {
+  it('reports hasMore=false and returns everything when fewer rows than the limit', async () => {
+    const rows = [
+      { slug: 'a', category: 'street', social_img: 'a.jpg', social_title: 'A' },
+      { slug: 'b', category: 'street', social_img: 'b.jpg', social_title: 'B' },
+    ];
+    const { mockDb } = _mockDbReturning(rows);
+    const result = await getStoriesPage(mockDb, 1, { limit: 30, offset: 0 });
+    expect(result.hasMore).toBe(false);
+    expect(result.stories).toHaveLength(2);
+  });
+
+  it('reports hasMore=true and trims the extra probe row when more rows exist than the limit', async () => {
+    const rows = Array.from({ length: 4 }, (_, i) => ({
+      slug: `s${i}`, category: 'street', social_img: `${i}.jpg`, social_title: `S${i}`,
+    }));
+    const { mockDb } = _mockDbReturning(rows); // limit=3, DB returns limit+1=4
+    const result = await getStoriesPage(mockDb, 1, { limit: 3, offset: 0 });
+    expect(result.hasMore).toBe(true);
+    expect(result.stories).toHaveLength(3);
+    expect(result.stories.map((s) => s.slug)).toEqual(['s0', 's1', 's2']);
+  });
+
+  it('requests limit+1 rows and the given offset, without a category filter', async () => {
+    const { mockDb, calls } = _mockDbReturning([]);
+    await getStoriesPage(mockDb, 1, { limit: 30, offset: 60 });
+    expect(calls[0].sql).not.toMatch(/AND category = \?/i);
+    expect(calls[0].args).toEqual([1, 31, 60]);
+  });
+
+  it('filters by category when given, binding it between tenant and limit', async () => {
+    const { mockDb, calls } = _mockDbReturning([]);
+    await getStoriesPage(mockDb, 1, { category: 'beauty', limit: 30, offset: 0 });
+    expect(calls[0].sql).toMatch(/AND category = \?/i);
+    expect(calls[0].args).toEqual([1, 'beauty', 31, 0]);
+  });
+
+  it('only selects the four fields the archive grid actually renders', async () => {
+    const { mockDb, calls } = _mockDbReturning([]);
+    await getStoriesPage(mockDb, 1, { limit: 30, offset: 0 });
+    expect(calls[0].sql).toMatch(/SELECT slug, category, social_img, social_title FROM stories/);
   });
 });
 
